@@ -100,7 +100,7 @@ function getListTendik(data,callback){
         params.push(data.jenis_tendik_id)
     }
 
-
+    txt += " ORDER BY t.nama "
 
     sql.query(txt,[params],function(err, res){
         if(err){
