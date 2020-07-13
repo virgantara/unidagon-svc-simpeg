@@ -1,11 +1,14 @@
 'use strict';
+
+
 module.exports = function(app) {
   var todoList = require('../controller/appController');
- 
-  app.route('/m/izin/create')
-    .post(todoList.createIzin);
 
-  app.route('/m/izin/riwayat')
-    .get(todoList.getRiwayatIzin);
+  app.route('/simpeg/dosen/list')
+    .get(todoList.getListDosen);
+
+  app.route('/simpeg/tendik/list')
+    .get(todoList.getListTendik);
+
 
 };

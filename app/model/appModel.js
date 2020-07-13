@@ -12,23 +12,48 @@ var Pegawai = function(task){
     
 };
 
-function getMahasiswaByNim(key,callback){
-    var params = key.trim()
-    var txt = "SELECT m.id, nip_promotor as id_dsn,d.nama_dosen as nm_dsn, nim_mhs, nama_mahasiswa,m.jenis_kelamin, ";
-        txt += " tempat_lahir,tgl_lahir, telepon, hp,rt,rw,dusun, m.email, ktp,alamat, kk.nama_kampus, ";
-        txt += " kode_pos, desa, kecamatan,k.kab,p.prov,agama,gol_darah, m.kampus, m.va_code ";
-        txt += ", ps.kode_prodi, ps.nama_prodi, ps.singkatan, f.kode_fakultas, f.nama_fakultas, " 
-        txt += " m.status_warga as sw, m.warga_negara as wn, m.status_aktivitas, m.semester, m.tgl_lulus, "
-        txt += " m.tgl_sk_yudisium, m.no_sk_yudisium, m.kode_jenjang_studi ";
-        txt += " FROM simak_mastermahasiswa m ";
-        txt += "left JOIN simak_kabupaten k ON k.id = m.kabupaten ";
-        txt += "left JOIN simak_masterdosen d ON d.id = m.nip_promotor ";
-        txt += "left JOIN simak_propinsi p ON p.id = m.provinsi ";
-        txt += " JOIN simak_masterprogramstudi ps ON ps.kode_prodi = m.kode_prodi ";
-        txt += " JOIN simak_masterfakultas f ON ps.kode_fakultas = f.kode_fakultas ";
-        txt += " JOIN simak_kampus kk ON kk.kode_kampus = m.kampus ";
-        // txt += " JOIN simak_users u ON u.nim = m.nim_mhs ";
-        txt += " WHERE m.nim_mhs = ?;";
+function getListDosen(data,callback){
+    var params = []
+    var txt = "select d.NIY, d.NIDN, d.nama, d.gender, d.tempat_lahir, d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu from data_diri d "
+    txt += " JOIN m_pangkat p on p.id = d.pangkat"
+    txt += " JOIN m_jabatan_akademik j on j.id = d.jabatan_fungsional"
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi pr ON pr.ID = u.id_prod "
+    txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
+    txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id"
+    txt += " WHERE d.nama <> '-' AND d.status_dosen = 1 "
+
+    if(data.nama){
+        txt += " AND d.nama LIKE '%"+data.nama+"%'"
+        
+    }
+
+    if(data.status){
+        txt += " AND u.status = ? "
+        params.push(data.status)
+    }
+
+    if(data.jenjang_kode){
+        txt += " AND d.jenjang_kode = ? "
+        params.push(data.jenjang_kode)
+    }
+
+    if(data.pangkat){
+        txt += " AND d.pangkat = ? "
+        params.push(data.pangkat)
+    }
+
+    if(data.jabfung){
+        txt += " AND d.jabatan_fungsional = ? "
+        params.push(data.jabfung)
+    }
+
+    if(data.prodi){
+        txt += " AND d.jabatan_fungsional = ? "
+        params.push(data.prodi)
+    }
+
+    txt += " ORDER BY d.nama "
     sql.query(txt,[params],function(err, res){
         if(err){
             console.log(err);
@@ -43,21 +68,54 @@ function getMahasiswaByNim(key,callback){
 }
 
 
-function createIzin(data,callback){
-    // console.log(data)
-    let txt = "INSERT INTO erp_izin_mahasiswa (nim, tahun_akademik, semester, kota_id, negara_id, keperluan_id, alasan, tanggal_berangkat, tanggal_pulang, durasi) "
-    txt += " VALUES (?,?,?,?,?,?,?,?,?,?); "
-    sql.query(txt,[data.nim, data.tahun_akademik, data.semester, data.kota_id, data.negara_id, data.keperluan_id, data.alasan, data.tanggal_berangkat, data.tanggal_pulang, data.durasi],function(err,res){
-        if(err) {
-            console.log(err)
-            callback(err,null)
+function getListTendik(data,callback){
+    var params = []
+    var txt = "select NIY, t.nama, gender, tempat_lahir, tanggal_lahir, t.jenjang_kode, t.jenis_tendik_id, uk.nama as unit_kerja FROM tendik t "
+    txt += " JOIN m_jenjang_pendidikan jp on jp.kode = t.jenjang_kode"
+    txt += " JOIN m_jabatan_tendik jt on jt.id = t.jabatan_id"
+    txt += " JOIN unit_kerja uk on uk.id = t.unit_id"
+    txt += " WHERE 1 "
+
+    if(data.nama){
+        txt += " AND t.nama LIKE '%"+data.nama+"%'"
+    }
+
+    if(data.unit_id){
+        txt += " AND t.unit_id = ? "
+        params.push(data.unit_id)
+    }
+
+    if(data.jenjang_kode){
+        txt += " AND t.jenjang_kode = ? "
+        params.push(data.jenjang_kode)
+    }
+
+    if(data.jabatan_id){
+        txt += " AND t.jabatan_id = ? "
+        params.push(data.jabatan_id)
+    }
+
+    if(data.jenis_tendik_id){
+        txt += " AND t.jenis_tendik_id = ? "
+        params.push(data.jenis_tendik_id)
+    }
+
+
+
+    sql.query(txt,[params],function(err, res){
+        if(err){
+            console.log(err);
+            callback(err,null);
         }
-        callback(null,res)
-    })
+        else{
+            
+            callback(null, res);
+        }
+    });
+  
 }
 
 
-
-Pegawai.getMahasiswaByNim = getMahasiswaByNim;
-Pegawai.createIzin = createIzin
+Pegawai.getListDosen = getListDosen;
+Pegawai.getListTendik = getListTendik
 module.exports= Pegawai;
