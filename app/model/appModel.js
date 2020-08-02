@@ -12,6 +12,210 @@ var Pegawai = function(task){
     
 };
 
+function listKonferensi(dataQuery, callback){
+    let params = []
+    var txt = "SELECT j.ID, judul, penyelenggara, link,status_kehadiran, tahun from konferensi j "
+    txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " WHERE ver = 'Sudah Diverifikasi' "
+    if(dataQuery.tahun){
+        txt += " and tahun = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " LIMIT "+dataQuery.offset+", 20 "
+    // params.push(dataQuery.offset)
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+function rekapKonferensi(dataQuery, callback){
+    let params = []
+    var txt = "select jenis_publikasi_id as pub_id, pub.nama, count(*) as jumlah from konferensi j "
+    
+    // var txt = "SELECT j.ID, judul, penerbit, ISBN, vol, link, tahun from buku j "
+    txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " WHERE ver = 'Sudah Diverifikasi'  "
+    if(dataQuery.tahun){
+        txt += " and tahun = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " group by pub_id, pub.nama "
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+function listBuku(dataQuery, callback){
+    let params = []
+    var txt = "SELECT j.ID, judul, penerbit, ISBN, vol, link, tahun from buku j "
+    txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
+    if(dataQuery.tahun){
+        txt += " and tahun = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " LIMIT "+dataQuery.offset+", 20 "
+    // params.push(dataQuery.offset)
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+function rekapBuku(dataQuery, callback){
+    let params = []
+    var txt = "select jenis_publikasi_id as pub_id, pub.nama, count(*) as jumlah from buku j "
+    
+    // var txt = "SELECT j.ID, judul, penerbit, ISBN, vol, link, tahun from buku j "
+    txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
+    if(dataQuery.tahun){
+        txt += " and tahun = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " group by pub_id, pub.nama "
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+function listJurnal(dataQuery, callback){
+    let params = []
+    var txt = "SELECT id, judul, nama_jurnal, eissn, pissn, volume, nomor, halaman, path_berkas, berkas as url from jurnal j WHERE is_approved = 1 "
+    if(dataQuery.tahun){
+        txt += " and tahun_terbit = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " LIMIT "+dataQuery.offset+", 20 "
+    // params.push(dataQuery.offset)
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+function rekapJurnal(dataQuery, callback){
+    let params = []
+    var txt = "select jenis_publikasi_id as pub_id, pub.nama, count(*) as jumlah from jurnal j "
+    
+    txt += " join jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " WHERE is_approved = 1 "
+    if(dataQuery.tahun){
+        txt += " and tahun_terbit = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " group by jenis_publikasi_id, pub.nama "
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+function countLuaranLain(dataQuery, callback){
+    var params = []
+
+    var txt = "select tahun_pelaksanaan as tahun, count(*) as jumlah from luaran_lain "
+    txt += " where ver = 'Sudah Diverifikasi' "
+    if(dataQuery.tahun){
+        txt += " and tahun_pelaksanaan = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " group by tahun_pelaksanaan order by tahun_pelaksanaan "
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err, null)
+
+        callback(null, res)
+    })
+}
+
+function countHki(dataQuery, callback){
+    var params = []
+
+    var txt = "select tahun_pelaksanaan as tahun, count(*) as jumlah from hki "
+    txt += " where ver = 'Sudah Diverifikasi' "
+    if(dataQuery.tahun){
+        txt += " and tahun_pelaksanaan = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " group by tahun_pelaksanaan order by tahun_pelaksanaan "
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err, null)
+
+        callback(null, res)
+    })
+}
+
+function countKonferensi(dataQuery, callback){
+    var params = []
+
+    var txt = "select tahun as tahun, count(*) as jumlah from konferensi "
+    txt += " where ver = 'Sudah Diverifikasi' "
+    if(dataQuery.tahun){
+        txt += " and tahun = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " group by tahun order by tahun "
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err, null)
+
+        callback(null, res)
+    })
+}
+
+function countJurnal(dataQuery, callback){
+    var params = []
+
+    var txt = "select tahun_terbit as tahun, count(*) as jumlah from jurnal "
+    txt += " where is_approved = 1 "
+    if(dataQuery.tahun){
+        txt += " and tahun_terbit = ? "
+        params.push(dataQuery.tahun)
+    }
+
+    txt += " group by tahun_terbit order by tahun_terbit "
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err, null)
+
+        callback(null, res)
+    })
+}
+
+function countBuku(dataQuery, callback){
+    var params = []
+
+    var txt = "select tahun, count(*) as jumlah from buku b "
+    txt += " JOIN jenis_publikasi pub ON pub.id = b.jenis_publikasi_id "
+    txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
+    // txt += " where ver = 'Sudah Diverifikasi' "
+    if(dataQuery.tahun){
+        txt += " and tahun = ? "
+        params.push(dataQuery.tahun)
+    }
+    txt += " group by tahun order by tahun "
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err, null)
+
+        callback(null, res)
+    })
+}
+
 function getListDosen(data,callback){
     var params = []
     var txt = "select d.NIY, d.NIDN, d.nama, d.gender, d.tempat_lahir, d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu from data_diri d "
@@ -118,4 +322,13 @@ function getListTendik(data,callback){
 
 Pegawai.getListDosen = getListDosen;
 Pegawai.getListTendik = getListTendik
+Pegawai.countJurnal = countJurnal
+Pegawai.rekapJurnal = rekapJurnal
+Pegawai.listJurnal = listJurnal
+Pegawai.countBuku = countBuku
+Pegawai.listBuku = listBuku
+Pegawai.rekapBuku = rekapBuku
+Pegawai.countLuaranLain = countLuaranLain
+Pegawai.countHki = countHki
+Pegawai.countKonferensi = countKonferensi
 module.exports= Pegawai;
