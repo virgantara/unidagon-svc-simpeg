@@ -4,9 +4,76 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.listLain = function(req, res) {
+
+  Simpeg.listLain(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.rekapLain = function(req, res) {
+
+  Simpeg.rekapLain(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+
+exports.listHki = function(req, res) {
+
+  Simpeg.listHki(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.rekapHki = function(req, res) {
+
+  Simpeg.rekapHki(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
 exports.countHki = function(req, res) {
 
   Simpeg.countHki(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.listKonferensi = function(req, res) {
+
+  Simpeg.listKonferensi(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.rekapKonferensi = function(req, res) {
+
+  Simpeg.rekapKonferensi(
     req.query,
     function(err, values) {    
     if (err)

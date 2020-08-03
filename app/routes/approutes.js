@@ -4,8 +4,26 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/simpeg/pub/luaranlain/list')
+    .get(todoList.listLain);
+
+  app.route('/simpeg/pub/luaranlain/rekap')
+    .get(todoList.rekapLain);
+
+  app.route('/simpeg/pub/hki/list')
+    .get(todoList.listHki);
+
+  app.route('/simpeg/pub/hki/rekap')
+    .get(todoList.rekapHki);
+
   app.route('/simpeg/pub/hki/count')
     .get(todoList.countHki);
+
+  app.route('/simpeg/pub/konferensi/list')
+    .get(todoList.listKonferensi);
+
+  app.route('/simpeg/pub/konferensi/rekap')
+    .get(todoList.rekapKonferensi);
 
   app.route('/simpeg/pub/konferensi/count')
     .get(todoList.countKonferensi);
