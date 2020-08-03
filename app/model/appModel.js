@@ -424,6 +424,52 @@ function countBuku(dataQuery, callback){
     })
 }
 
+function getRekapDosenJabfung(dataQuery, callback){
+    
+    var params = []
+
+    var txt = "SELECT j.nama, COUNT(*) as total FROM data_diri d "
+    txt += " JOIN m_jabatan_akademik j ON j.id = d.jabatan_fungsional "
+    txt += " WHERE d.status_dosen = 1 AND d.nama <> '-' "
+    
+
+    if(dataQuery.id){
+        txt += " AND j.id = ?"
+        params.push(dataQuery.id)
+    }
+
+    txt += " GROUP BY j.nama, j.id  ORDER BY j.id ASC"
+
+    sql.query(txt,params,function(err,res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    })
+}
+
+function getRekapDosenFakultas(dataQuery, callback){
+    
+    var params = []
+
+    var txt = "SELECT f.ID as id, f.nama, COUNT(*) as total FROM user u "
+    txt += " JOIN prodi p ON u.id_prod = p.ID "
+    txt += " JOIN fakultas f ON f.ID = p.id_fak "
+    txt += " JOIN data_diri d ON d.NIY = u.NIY "
+    txt += " WHERE d.status_dosen = 1 AND d.nama <> '-' "
+    txt += " GROUP BY f.ID, f.nama"
+
+    if(dataQuery.id){
+        txt += " AND f.ID = ?"
+        params.push(dataQuery.id)
+    }
+
+    sql.query(txt,params,function(err,res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    })
+}
+
 function getListDosen(data,callback){
     var params = []
     var txt = "select d.NIY, d.NIDN, d.nama, d.gender, d.tempat_lahir, d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu from data_diri d "
