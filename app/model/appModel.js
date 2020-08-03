@@ -12,15 +12,88 @@ var Pegawai = function(task){
     
 };
 
+function verifikasiLuaranLain(dataPost, callback){
+    
+    var txt = "UPDATE luaran_lain SET ver = ?, komentar = ? WHERE id = ?; "
+    
+    let params = [dataPost.ver,dataPost.komentar,dataPost.id]
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+function verifikasiHki(dataPost, callback){
+    
+    var txt = "UPDATE hki SET ver = ?, komentar = ? WHERE id = ?; "
+    
+    let params = [dataPost.ver,dataPost.komentar,dataPost.id]
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+function verifikasiKonferensi(dataPost, callback){
+    
+    var txt = "UPDATE konferensi SET ver = ?, komentar = ? WHERE ID = ?; "
+    
+    let params = [dataPost.ver,dataPost.komentar,dataPost.id]
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+function verifikasiBuku(dataPost, callback){
+    
+    var txt = "UPDATE buku SET ver = ?, komentar = ? WHERE ID = ?; "
+    
+    let params = [dataPost.ver,dataPost.komentar,dataPost.id]
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+
+function verifikasiJurnal(dataPost, callback){
+    
+    var txt = "UPDATE jurnal SET is_approved = ?, komentar = ? WHERE id = ?; "
+    
+    let params = [dataPost.is_approved,dataPost.komentar,dataPost.id]
+
+    sql.query(txt, params, function(err, res){
+        if(err) callback(err,null)
+
+        callback(null, res)
+    });
+}
+
+
 function listLain(dataQuery, callback){
     let params = []
-    var txt = "SELECT h.id, judul, jl.nama as jenis_luaran, deskripsi, tahun_pelaksanaan as tahun, sumber_dana, berkas, shared_link, (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM luaran_lain_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.luaran_lain_id = h.id ) as authors from luaran_lain h "
+    var txt = "SELECT h.id, judul, komentar, ver, jl.nama as jenis_luaran, deskripsi, tahun_pelaksanaan as tahun, sumber_dana, berkas, shared_link, (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM luaran_lain_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.luaran_lain_id = h.id ) as authors from luaran_lain h "
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_luaran_id "
-    txt += " WHERE ver = 'Sudah Diverifikasi' AND jl.kode = 'LAIN' "
+    txt += " WHERE jl.kode = 'LAIN' "
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
     }
+
+    if(dataQuery.ver){
+        txt += " AND ver = ? "
+        params.push(dataQuery.ver)
+    }
+
     txt += " LIMIT "+dataQuery.offset+", 20 "
     // params.push(dataQuery.offset)
 
@@ -35,10 +108,15 @@ function rekapLain(dataQuery, callback){
     let params = []
     var txt = "SELECT jenis_luaran_id, jl.nama, count(*) as jumlah from luaran_lain h "
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_luaran_id "
-    txt += " WHERE ver = 'Sudah Diverifikasi' AND jl.kode = 'LAIN' "
+    txt += " WHERE jl.kode = 'LAIN' "
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.ver){
+        txt += " AND ver = ? "
+        params.push(dataQuery.ver)
     }
     txt += " group by jenis_luaran_id, jl.nama "
     sql.query(txt, params, function(err, res){
@@ -51,13 +129,19 @@ function rekapLain(dataQuery, callback){
 
 function listHki(dataQuery, callback){
     let params = []
-    var txt = "SELECT h.id, no_pendaftaran, judul, jl.nama as jenis_hki, status_hki, tahun_pelaksanaan as tahun, sumber_dana, berkas, shared_link, (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM hki_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.hki_id = h.id ) as authors from hki h "
+    var txt = "SELECT h.id, komentar, ver, no_pendaftaran, judul, jl.nama as jenis_hki, status_hki, tahun_pelaksanaan as tahun, sumber_dana, berkas, shared_link, (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM hki_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.hki_id = h.id ) as authors from hki h "
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_hki_id "
-    txt += " WHERE ver = 'Sudah Diverifikasi' AND jl.kode = 'HKI' "
+    txt += " WHERE jl.kode = 'HKI' "
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
     }
+
+    if(dataQuery.ver){
+        txt += " AND ver = ? "
+        params.push(dataQuery.ver)
+    }
+
     txt += " LIMIT "+dataQuery.offset+", 20 "
     // params.push(dataQuery.offset)
 
@@ -87,11 +171,16 @@ function rekapHki(dataQuery, callback){
 
 function listKonferensi(dataQuery, callback){
     let params = []
-    var txt = "SELECT j.ID, judul, penyelenggara, link,status_kehadiran, tahun,nama_forum, tingkat_forum, tanggal_mulai, tanggal_selesai, ISBN, sumber_dana, lokasi, (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ka.id SEPARATOR '<br>') FROM konferensi_author ka JOIN user u ON u.NIY = ka.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ka.konferensi_id = j.ID ) as authors from konferensi j "
-    txt += " WHERE ver = 'Sudah Diverifikasi' "
+    var txt = "SELECT j.ID, komentar, ver, judul, penyelenggara, link,status_kehadiran, tahun,nama_forum, tingkat_forum, tanggal_mulai, tanggal_selesai, ISBN, sumber_dana, lokasi, (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ka.id SEPARATOR '<br>') FROM konferensi_author ka JOIN user u ON u.NIY = ka.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ka.konferensi_id = j.ID ) as authors from konferensi j "
+    txt += " WHERE 1 "
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.ver){
+        txt += " AND ver = ? "
+        params.push(dataQuery.ver)
     }
     txt += " LIMIT "+dataQuery.offset+", 20 "
     // params.push(dataQuery.offset)
@@ -125,12 +214,17 @@ function rekapKonferensi(dataQuery, callback){
 
 function listBuku(dataQuery, callback){
     let params = []
-    var txt = "SELECT j.ID, judul, penerbit, ISBN, vol, link, tahun from buku j "
+    var txt = "SELECT j.ID, komentar, ver,  judul, penerbit, ISBN, vol, link, tahun from buku j "
     txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
-    txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
+    txt += " WHERE pub.kode = 'BUKU' "
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.ver){
+        txt += " AND ver = ? "
+        params.push(dataQuery.ver)
     }
     txt += " LIMIT "+dataQuery.offset+", 20 "
     // params.push(dataQuery.offset)
@@ -159,15 +253,30 @@ function rekapBuku(dataQuery, callback){
 
         callback(null, res)
     });
+
 }
 
 function listJurnal(dataQuery, callback){
     let params = []
-    var txt = "SELECT id, judul, nama_jurnal, eissn, pissn, volume, nomor, halaman, path_berkas, berkas as url from jurnal j WHERE is_approved = 1 "
+    var txt = "SELECT id, judul, is_approved, nama_jurnal, eissn, pissn, volume, nomor, halaman, path_berkas, berkas as url, komentar, " 
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM jurnal_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.jurnal_id = j.id ) as authors "
+    txt += " from jurnal j WHERE 1 "
+    
+    if(dataQuery.id){
+        txt += " and id = ? "
+        params.push(dataQuery.id)
+    }
+
     if(dataQuery.tahun){
         txt += " and tahun_terbit = ? "
         params.push(dataQuery.tahun)
     }
+
+    if(dataQuery.is_approved){
+        txt += " and is_approved = ? "
+        params.push(dataQuery.is_approved)
+    }
+
     txt += " LIMIT "+dataQuery.offset+", 20 "
     // params.push(dataQuery.offset)
 
@@ -200,10 +309,15 @@ function countLuaranLain(dataQuery, callback){
     var params = []
 
     var txt = "select tahun_pelaksanaan as tahun, count(*) as jumlah from luaran_lain "
-    txt += " where ver = 'Sudah Diverifikasi' "
+    txt += " where 1 "
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.ver){
+        txt += " AND ver = ? "
+        params.push(dataQuery.ver)
     }
     txt += " group by tahun_pelaksanaan order by tahun_pelaksanaan "
 
@@ -218,10 +332,15 @@ function countHki(dataQuery, callback){
     var params = []
 
     var txt = "select tahun_pelaksanaan as tahun, count(*) as jumlah from hki "
-    txt += " where ver = 'Sudah Diverifikasi' "
+    txt += " where 1 "
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.ver){
+        txt += " AND ver = ? "
+        params.push(dataQuery.ver)
     }
     txt += " group by tahun_pelaksanaan order by tahun_pelaksanaan "
 
@@ -236,11 +355,17 @@ function countKonferensi(dataQuery, callback){
     var params = []
 
     var txt = "select tahun as tahun, count(*) as jumlah from konferensi "
-    txt += " where ver = 'Sudah Diverifikasi' "
+    txt += " where 1 "
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
     }
+
+    if(dataQuery.ver){
+        txt += " AND ver = ? "
+        params.push(dataQuery.ver)
+    }
+
     txt += " group by tahun order by tahun "
 
     sql.query(txt, params, function(err, res){
@@ -254,12 +379,16 @@ function countJurnal(dataQuery, callback){
     var params = []
 
     var txt = "select tahun_terbit as tahun, count(*) as jumlah from jurnal "
-    txt += " where is_approved = 1 "
+    txt += " where 1 "
     if(dataQuery.tahun){
         txt += " and tahun_terbit = ? "
         params.push(dataQuery.tahun)
     }
 
+    if(dataQuery.is_approved){
+        txt += " AND is_approved = ? "
+        params.push(dataQuery.is_approved)
+    }
     txt += " group by tahun_terbit order by tahun_terbit "
 
     sql.query(txt, params, function(err, res){
@@ -274,12 +403,18 @@ function countBuku(dataQuery, callback){
 
     var txt = "select tahun, count(*) as jumlah from buku b "
     txt += " JOIN jenis_publikasi pub ON pub.id = b.jenis_publikasi_id "
-    txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
+    txt += " WHERE  pub.kode = 'BUKU' "
     // txt += " where ver = 'Sudah Diverifikasi' "
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
     }
+
+    if(dataQuery.ver){
+        txt += " AND ver = ? "
+        params.push(dataQuery.ver)
+    }
+    
     txt += " group by tahun order by tahun "
 
     sql.query(txt, params, function(err, res){
@@ -410,5 +545,10 @@ Pegawai.rekapHki = rekapHki
 Pegawai.listHki = listHki
 Pegawai.rekapLain = rekapLain
 Pegawai.listLain = listLain
+Pegawai.verifikasiJurnal = verifikasiJurnal
+Pegawai.verifikasiBuku = verifikasiBuku
+Pegawai.verifikasiKonferensi = verifikasiKonferensi
+Pegawai.verifikasiHki = verifikasiHki
+Pegawai.verifikasiLuaranLain = verifikasiLuaranLain
 
 module.exports= Pegawai;

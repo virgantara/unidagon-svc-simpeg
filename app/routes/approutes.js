@@ -4,6 +4,21 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/simpeg/pub/buku/verify')
+    .put(todoList.verifikasiBuku);
+
+  app.route('/simpeg/pub/konferensi/verify')
+    .put(todoList.verifikasiKonferensi);
+
+  app.route('/simpeg/pub/luaranlain/verify')
+    .put(todoList.verifikasiLuaranLain);
+
+  app.route('/simpeg/pub/hki/verify')
+    .put(todoList.verifikasiHki);
+
+  app.route('/simpeg/pub/jurnal/verify')
+    .put(todoList.verifikasiJurnal);
+
   app.route('/simpeg/pub/luaranlain/list')
     .get(todoList.listLain);
 

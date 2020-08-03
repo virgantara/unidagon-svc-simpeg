@@ -4,6 +4,61 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.verifikasiLuaranLain = function(req, res) {
+
+  Simpeg.verifikasiLuaranLain(
+    req.body,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.verifikasiHki = function(req, res) {
+
+  Simpeg.verifikasiHki(
+    req.body,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.verifikasiKonferensi = function(req, res) {
+
+  Simpeg.verifikasiKonferensi(
+    req.body,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.verifikasiBuku = function(req, res) {
+
+  Simpeg.verifikasiBuku(
+    req.body,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.verifikasiJurnal = function(req, res) {
+
+  Simpeg.verifikasiJurnal(
+    req.body,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
 exports.listLain = function(req, res) {
 
   Simpeg.listLain(
