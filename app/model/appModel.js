@@ -356,9 +356,17 @@ function rekapKonferensi(dataQuery, callback){
 
 function listBuku(dataQuery, callback){
     let params = []
-    var txt = "SELECT j.ID, komentar, ver,  judul, penerbit, ISBN, vol, link, tahun from buku j "
+    var txt = "SELECT j.ID, komentar, ver,  judul, penerbit, ISBN, vol, link, tahun "
+    txt += " from buku j "
     txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " JOIN buku_author ja ON ja.buku_id = j.id "
     txt += " WHERE pub.kode = 'BUKU' "
+    
+    if(dataQuery.NIY){
+        txt += " AND ja.NIY = ? "
+        params.push(dataQuery.NIY)
+    }
+
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
