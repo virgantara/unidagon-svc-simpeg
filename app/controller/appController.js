@@ -4,6 +4,51 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getRekapDosenJabfungFakultas = function(req, res) {
+
+  Simpeg.getRekapDosenJabfungFakultas(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+
+exports.getRekapDosenJabfung = function(req, res) {
+
+  Simpeg.getRekapDosenJabfung(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.getRekapDosenProdi = function(req, res) {
+
+  Simpeg.getRekapDosenProdi(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
+exports.getRekapDosenFakultas = function(req, res) {
+
+  Simpeg.getRekapDosenFakultas(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
 exports.verifikasiLuaranLain = function(req, res) {
 
   Simpeg.verifikasiLuaranLain(

@@ -4,6 +4,18 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/simpeg/dosen/jabfung/fakultas/rekap')
+    .get(todoList.getRekapDosenJabfungFakultas);
+
+  app.route('/simpeg/dosen/prodi/rekap')
+    .get(todoList.getRekapDosenProdi);
+
+  app.route('/simpeg/dosen/fakultas/rekap')
+    .get(todoList.getRekapDosenFakultas);
+
+  app.route('/simpeg/dosen/jabfung/rekap')
+    .get(todoList.getRekapDosenJabfung);
+
   app.route('/simpeg/pub/buku/verify')
     .put(todoList.verifikasiBuku);
 
