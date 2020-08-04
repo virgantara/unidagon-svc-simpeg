@@ -12,6 +12,48 @@ var Pegawai = function(task){
     
 };
 
+function getRiwayatPendidikan(data,callback){
+    var params = [data.NIY]
+    var txt = "select ID, NIY, tahun_lulus, jenjang, perguruan_tinggi, jurusan FROM pendidikan"
+    txt += " WHERE NIY = ?; "
+
+    sql.query(txt,[params],function(err, res){
+        if(err){
+            console.log(err);
+            callback(err,null);
+        }
+        else{
+            callback(null, res);
+        }
+    });
+  
+}
+
+function getProfilDosen(data,callback){
+    var params = [data.NIY]
+    var txt = "select d.NIY, d.NIDN, d.nama, d.gender, u.email, d.tempat_lahir, d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, bii.nama as bidang_ilmu_induk from data_diri d "
+    txt += " JOIN m_pangkat p on p.id = d.pangkat"
+    txt += " JOIN m_jabatan_akademik j on j.id = d.jabatan_fungsional"
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi pr ON pr.ID = u.id_prod "
+    txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
+    txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id"
+    txt += " WHERE u.NIY = ?; "
+
+    sql.query(txt,[params],function(err, res){
+        if(err){
+            console.log(err);
+            callback(err,null);
+        }
+        else{
+            callback(null, res);
+            
+        }
+    });
+  
+}
+
+
 function getRekapDosenProdi(dataQuery, callback){
     
     var params = []
@@ -355,10 +397,15 @@ function rekapBuku(dataQuery, callback){
 
 function listJurnal(dataQuery, callback){
     let params = []
-    var txt = "SELECT id, judul, is_approved, nama_jurnal, eissn, pissn, volume, nomor, halaman, path_berkas, berkas as url, komentar, " 
+    var txt = "SELECT j.id, judul, is_approved, nama_jurnal, eissn, pissn, volume, nomor, halaman, path_berkas, berkas as url, komentar, " 
     txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM jurnal_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.jurnal_id = j.id ) as authors "
-    txt += " from jurnal j WHERE 1 "
+    txt += " from jurnal j JOIN jurnal_author ja ON ja.jurnal_id = j.id WHERE 1 "
     
+    if(dataQuery.NIY){
+        txt += " AND ja.NIY = ? "
+        params.push(dataQuery.NIY)
+    }
+
     if(dataQuery.id){
         txt += " and id = ? "
         params.push(dataQuery.id)
@@ -523,7 +570,7 @@ function countBuku(dataQuery, callback){
 
 function getListDosen(data,callback){
     var params = []
-    var txt = "select d.NIY, d.NIDN, d.nama, d.gender, d.tempat_lahir, d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu from data_diri d "
+    var txt = "select d.NIY, d.NIDN, d.nama, d.gender, u.email, d.tempat_lahir, d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, bii.nama as bidang_ilmu_induk from data_diri d "
     txt += " JOIN m_pangkat p on p.id = d.pangkat"
     txt += " JOIN m_jabatan_akademik j on j.id = d.jabatan_fungsional"
     txt += " JOIN user u ON u.NIY = d.NIY "
@@ -651,4 +698,6 @@ Pegawai.getRekapDosenProdi = getRekapDosenProdi
 Pegawai.getRekapDosenFakultas = getRekapDosenFakultas
 Pegawai.getRekapDosenJabfung = getRekapDosenJabfung
 Pegawai.getRekapDosenJabfungFakultas = getRekapDosenJabfungFakultas
+Pegawai.getProfilDosen = getProfilDosen
+Pegawai.getRiwayatPendidikan = getRiwayatPendidikan
 module.exports= Pegawai;
