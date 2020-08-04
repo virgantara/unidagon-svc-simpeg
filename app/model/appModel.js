@@ -558,7 +558,7 @@ function getListDosen(data,callback){
     }
 
     if(data.prodi){
-        txt += " AND d.jabatan_fungsional = ? "
+        txt += " AND u.id_prod = ? "
         params.push(data.prodi)
     }
 
