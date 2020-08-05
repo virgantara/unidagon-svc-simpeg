@@ -42,7 +42,7 @@ function getProfilDosen(data,callback){
     txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
     txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id "
     txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
-    txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.id = bk.parent"
+    txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
     txt += " WHERE 1  "
 
     if(data.permalink){
@@ -604,7 +604,7 @@ function getListDosen(data,callback){
     txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
     txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id"
     txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
-    txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.id = bk.parent"
+    txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
     txt += " WHERE d.nama <> '-' AND d.status_dosen = 1 "
 
     if(data.nama){
