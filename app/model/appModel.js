@@ -445,7 +445,8 @@ function rekapKonferensi(dataQuery, callback){
 
 function listBuku(dataQuery, callback){
     let params = []
-    var txt = "SELECT j.ID, komentar, ver,  judul, penerbit, ISBN, vol, link, tahun "
+    var txt = "SELECT j.ID, komentar, ver,  judul, penerbit, ISBN, vol, link, tahun, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM buku_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.buku_id = j.id ) as authors "
     txt += " from buku j "
     txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
     if(dataQuery.NIY){
