@@ -263,6 +263,7 @@ function rekapLain(dataQuery, callback){
     let params = []
     var txt = "SELECT jenis_luaran_id, jl.nama, count(*) as jumlah from luaran_lain h "
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_luaran_id "
+    txt += " JOIN luaran_lain_author ja ON ja.luaran_lain_id = h.id "
     txt += " WHERE jl.kode = 'LAIN' "
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
@@ -272,6 +273,11 @@ function rekapLain(dataQuery, callback){
     if(dataQuery.ver){
         txt += " AND ver = ? "
         params.push(dataQuery.ver)
+    }
+
+    if(dataQuery.NIY){
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
     }
     txt += " group by jenis_luaran_id, jl.nama "
     sql.query(txt, params, function(err, res){
@@ -311,11 +317,18 @@ function rekapHki(dataQuery, callback){
     let params = []
     var txt = "SELECT jenis_hki_id, jl.nama, count(*) as jumlah from hki h "
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_hki_id "
+    txt += " JOIN hki_author ja ON ja.hki_id = h.id "
     txt += " WHERE ver = 'Sudah Diverifikasi' AND jl.kode = 'HKI' "
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
     }
+
+    if(dataQuery.NIY){
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+
     txt += " group by jenis_hki_id, jl.nama "
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
@@ -353,12 +366,18 @@ function listKonferensi(dataQuery, callback){
 function rekapKonferensi(dataQuery, callback){
     let params = []
     var txt = "select tingkat_forum as nama, count(*) as jumlah from konferensi j "
-    
+    txt += " JOIN konferensi_author ja ON ja.konferensi_id = j.id "
     txt += " WHERE ver = 'Sudah Diverifikasi'  "
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
     }
+
+    if(dataQuery.NIY){
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+
     txt += " group by nama "
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
@@ -405,11 +424,18 @@ function rekapBuku(dataQuery, callback){
     
     // var txt = "SELECT j.ID, judul, penerbit, ISBN, vol, link, tahun from buku j "
     txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " left join buku_author ja ON ja.buku_id = j.id "
     txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
     }
+
+    if(dataQuery.NIY){
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+
     txt += " group by pub_id, pub.nama "
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
@@ -458,13 +484,19 @@ function listJurnal(dataQuery, callback){
 function rekapJurnal(dataQuery, callback){
     let params = []
     var txt = "select jenis_publikasi_id as pub_id, pub.nama, count(*) as jumlah from jurnal j "
-    
+    txt += " left join jurnal_author ja ON ja.jurnal_id = j.id "
     txt += " join jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
     txt += " WHERE is_approved = 1 "
     if(dataQuery.tahun){
         txt += " and tahun_terbit = ? "
         params.push(dataQuery.tahun)
     }
+
+    if(dataQuery.NIY){
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+
     txt += " group by jenis_publikasi_id, pub.nama "
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
