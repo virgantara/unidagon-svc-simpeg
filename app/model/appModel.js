@@ -243,17 +243,21 @@ function listLain(dataQuery, callback){
     txt += " JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.luaran_lain_id = h.id ) as authors "
     txt += " from luaran_lain h "
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_luaran_id "
-    txt += " JOIN luaran_lain_author ja ON ja.luaran_lain_id = h.id "
-    txt += " WHERE jl.kode = 'LAIN' "
+    if(dataQuery.NIY){
+        txt += " JOIN luaran_lain_author ja ON ja.luaran_lain_id = h.id "
+        txt += " WHERE jl.kode = 'LAIN' "
+        txt += " and ja.NIY = ? "
+        
+        params.push(dataQuery.NIY)
+    }
+    else
+        txt += " WHERE jl.kode = 'LAIN' "
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
     }
 
-    if(dataQuery.NIY){
-        txt += " and ja.NIY = ? "
-        params.push(dataQuery.NIY)
-    }
+    
 
     if(dataQuery.ver){
         txt += " AND ver = ? "
@@ -274,8 +278,16 @@ function rekapLain(dataQuery, callback){
     let params = []
     var txt = "SELECT jenis_luaran_id, jl.nama, count(*) as jumlah from luaran_lain h "
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_luaran_id "
-    txt += " JOIN luaran_lain_author ja ON ja.luaran_lain_id = h.id "
-    txt += " WHERE jl.kode = 'LAIN' "
+    if(dataQuery.NIY){
+        txt += " JOIN luaran_lain_author ja ON ja.luaran_lain_id = h.id "
+        txt += " WHERE jl.kode = 'LAIN' "
+        txt += " and ja.NIY = ? "
+        
+        params.push(dataQuery.NIY)   
+    }
+    else
+        txt += " WHERE jl.kode = 'LAIN' "
+   
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
@@ -286,10 +298,7 @@ function rekapLain(dataQuery, callback){
         params.push(dataQuery.ver)
     }
 
-    if(dataQuery.NIY){
-        txt += " and ja.NIY = ? "
-        params.push(dataQuery.NIY)   
-    }
+    
     txt += " group by jenis_luaran_id, jl.nama "
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
@@ -307,8 +316,15 @@ function listHki(dataQuery, callback){
     txt += " ORDER BY ha.id SEPARATOR '<br>') FROM hki_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd "
     txt += " ON dd.NIY = u.NIY WHERE ha.hki_id = h.id ) as authors from hki h "
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_hki_id "
-    txt += " JOIN hki_author ja ON ja.hki_id = h.id "
-    txt += " WHERE jl.kode = 'HKI' "
+    if(dataQuery.NIY){
+        txt += " JOIN hki_author ja ON ja.hki_id = h.id WHERE jl.kode = 'HKI' "
+        txt += " WHERE jl.kode = 'HKI' "
+        txt += " AND ja.NIY = ? "
+        params.push(dataQuery.NIY)
+    }
+    else
+        txt += " WHERE jl.kode = 'HKI' "
+    
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
@@ -319,10 +335,7 @@ function listHki(dataQuery, callback){
         params.push(dataQuery.ver)
     }
 
-    if(dataQuery.NIY){
-        txt += " AND ja.NIY = ? "
-        params.push(dataQuery.NIY)
-    }
+    
 
     txt += " LIMIT "+dataQuery.offset+", 20 "
     // params.push(dataQuery.offset)
@@ -338,17 +351,19 @@ function rekapHki(dataQuery, callback){
     let params = []
     var txt = "SELECT jenis_hki_id, jl.nama, count(*) as jumlah from hki h "
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_hki_id "
-    txt += " JOIN hki_author ja ON ja.hki_id = h.id "
-    txt += " WHERE ver = 'Sudah Diverifikasi' AND jl.kode = 'HKI' "
+    if(dataQuery.NIY){
+        txt += " JOIN hki_author ja ON ja.hki_id = h.id WHERE ver = 'Sudah Diverifikasi' AND jl.kode = 'HKI' "
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+    else 
+        txt += " WHERE ver = 'Sudah Diverifikasi' AND jl.kode = 'HKI' "
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
     }
 
-    if(dataQuery.NIY){
-        txt += " and ja.NIY = ? "
-        params.push(dataQuery.NIY)   
-    }
+    
 
     txt += " group by jenis_hki_id, jl.nama "
     sql.query(txt, params, function(err, res){
@@ -366,16 +381,21 @@ function listKonferensi(dataQuery, callback){
     txt += " <br>NIDN : ',dd.NIDN)  ORDER BY ka.id SEPARATOR '<br>') FROM konferensi_author ka "
     txt += " JOIN user u ON u.NIY = ka.NIY JOIN data_diri dd ON dd.NIY = u.NIY "
     txt += " WHERE ka.konferensi_id = j.ID ) as authors from konferensi j "
-    txt += " JOIN konferensi_author ja ON ja.konferensi_id = j.id "
-    txt += " WHERE 1 "
+
+    if(dataQuery.NIY)
+    {
+        txt += " JOIN konferensi_author ja ON ja.konferensi_id = j.id "
+        txt += " WHERE ja.NIY = ? "
+        params.push(dataQuery.NIY)
+        
+    }
+
+    else 
+        txt += " WHERE 1 "
+    
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
-    }
-
-    if(dataQuery.NIY){
-        txt += " AND ja.NIY = ? "
-        params.push(dataQuery.NIY)
     }
 
     if(dataQuery.ver){
@@ -398,17 +418,22 @@ function listKonferensi(dataQuery, callback){
 function rekapKonferensi(dataQuery, callback){
     let params = []
     var txt = "select tingkat_forum as nama, count(*) as jumlah from konferensi j "
-    txt += " JOIN konferensi_author ja ON ja.konferensi_id = j.id "
-    txt += " WHERE ver = 'Sudah Diverifikasi'  "
+    if(dataQuery.NIY){
+        txt += " JOIN konferensi_author ja ON ja.konferensi_id = j.id "
+        txt += " WHERE ver = 'Sudah Diverifikasi'  "
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+
+    else 
+        txt += " WHERE ver = 'Sudah Diverifikasi'  "
+
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
     }
 
-    if(dataQuery.NIY){
-        txt += " and ja.NIY = ? "
-        params.push(dataQuery.NIY)   
-    }
+    
 
     txt += " group by nama "
     sql.query(txt, params, function(err, res){
@@ -423,13 +448,17 @@ function listBuku(dataQuery, callback){
     var txt = "SELECT j.ID, komentar, ver,  judul, penerbit, ISBN, vol, link, tahun "
     txt += " from buku j "
     txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
-    txt += " JOIN buku_author ja ON ja.buku_id = j.id "
-    txt += " WHERE pub.kode = 'BUKU' "
-    
     if(dataQuery.NIY){
+        txt += " JOIN buku_author ja ON ja.buku_id = j.id "
+        txt += " WHERE pub.kode = 'BUKU' "
         txt += " AND ja.NIY = ? "
         params.push(dataQuery.NIY)
     }
+
+    else
+        txt += " WHERE pub.kode = 'BUKU' "
+    
+    
 
     if(dataQuery.tahun){
         txt += " and tahun = ? "
@@ -456,17 +485,20 @@ function rekapBuku(dataQuery, callback){
     
     // var txt = "SELECT j.ID, judul, penerbit, ISBN, vol, link, tahun from buku j "
     txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
-    txt += " left join buku_author ja ON ja.buku_id = j.id "
-    txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
+    if(dataQuery.NIY){
+        txt += " left join buku_author ja ON ja.buku_id = j.id "
+        txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+    else 
+        txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
     }
 
-    if(dataQuery.NIY){
-        txt += " and ja.NIY = ? "
-        params.push(dataQuery.NIY)   
-    }
+    
 
     txt += " group by pub_id, pub.nama "
     sql.query(txt, params, function(err, res){
@@ -481,12 +513,14 @@ function listJurnal(dataQuery, callback){
     let params = []
     var txt = "SELECT j.id, judul, is_approved, nama_jurnal, eissn, pissn, volume, nomor, halaman, path_berkas, berkas as url, komentar, " 
     txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM jurnal_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.jurnal_id = j.id ) as authors "
-    txt += " from jurnal j JOIN jurnal_author ja ON ja.jurnal_id = j.id WHERE 1 "
-    
+    txt += " from jurnal j "
     if(dataQuery.NIY){
-        txt += " AND ja.NIY = ? "
+        txt += " JOIN jurnal_author ja ON ja.jurnal_id = j.id "
+        txt += " WHERE ja.NIY = ? "
         params.push(dataQuery.NIY)
     }
+    else 
+        txt += " WHERE 1 "
 
     if(dataQuery.id){
         txt += " and id = ? "
