@@ -578,7 +578,16 @@ function countLuaranLain(dataQuery, callback){
     var params = []
 
     var txt = "select tahun_pelaksanaan as tahun, count(*) as jumlah from luaran_lain "
-    txt += " where 1 "
+    
+    if(dataQuery.NIY){
+        txt += " join luaran_lain_author ja ON ja.luaran_lain_id = j.id "
+        txt += " WHERE 1 "
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+    else
+        txt += " where 1 "
+    
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
@@ -600,8 +609,16 @@ function countLuaranLain(dataQuery, callback){
 function countHki(dataQuery, callback){
     var params = []
 
-    var txt = "select tahun_pelaksanaan as tahun, count(*) as jumlah from hki "
-    txt += " where 1 "
+    var txt = "select tahun_pelaksanaan as tahun, count(*) as jumlah from hki j "
+    if(dataQuery.NIY){
+        txt += " join hki_author ja ON ja.hki_id = j.id "
+        txt += " WHERE 1 "
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+    else
+        txt += " where 1 "
+    
     if(dataQuery.tahun){
         txt += " and tahun_pelaksanaan = ? "
         params.push(dataQuery.tahun)
@@ -624,17 +641,21 @@ function countKonferensi(dataQuery, callback){
     var params = []
 
     var txt = "select tahun , count(*) as jumlah from konferensi j "
-    txt += " JOIN konferensi_author ja ON ja.konferensi_id = j.id "
-    txt += " where 1 "
+    if(dataQuery.NIY){
+        txt += " JOIN konferensi_author ja ON ja.konferensi_id = j.id "
+        txt += " where 1 "
+        txt += " AND ja.NIY = ? "
+        params.push(dataQuery.NIY)
+    }
+    else 
+        txt += " where 1 "
+
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
     }
 
-    if(dataQuery.NIY){
-        txt += " AND ja.NIY = ? "
-        params.push(dataQuery.NIY)
-    }
+    
 
     if(dataQuery.ver){
         txt += " AND ver = ? "
@@ -653,8 +674,17 @@ function countKonferensi(dataQuery, callback){
 function countJurnal(dataQuery, callback){
     var params = []
 
-    var txt = "select tahun_terbit as tahun, count(*) as jumlah from jurnal "
-    txt += " where 1 "
+    var txt = "select tahun_terbit as tahun, count(*) as jumlah from jurnal j "
+    if(dataQuery.NIY){
+        txt += " JOIN jurnal_author ja ON ja.jurnal_id = j.id "
+        txt += " WHERE ja.NIY = ? "
+        params.push(dataQuery.NIY)
+
+    }
+
+    else
+        txt += " where 1 "
+    
     if(dataQuery.tahun){
         txt += " and tahun_terbit = ? "
         params.push(dataQuery.tahun)
@@ -678,7 +708,14 @@ function countBuku(dataQuery, callback){
 
     var txt = "select tahun, count(*) as jumlah from buku b "
     txt += " JOIN jenis_publikasi pub ON pub.id = b.jenis_publikasi_id "
-    txt += " WHERE  pub.kode = 'BUKU' "
+    if(dataQuery.NIY){
+        txt += " join buku_author ja ON ja.buku_id = j.id "
+        txt += " WHERE  pub.kode = 'BUKU' "
+        txt += " and ja.NIY = ? "
+        params.push(dataQuery.NIY)   
+    }
+    else
+        txt += " WHERE  pub.kode = 'BUKU' "
     // txt += " where ver = 'Sudah Diverifikasi' "
     if(dataQuery.tahun){
         txt += " and tahun = ? "
