@@ -12,6 +12,43 @@ var Pegawai = function(task){
     
 };
 
+function countDosen(dataQuery, callback){
+    var params = []
+
+    var txt = "SELECT COUNT(*) as total FROM user u "
+    txt += " JOIN prodi p ON u.id_prod = p.ID "
+    txt += " JOIN data_diri d ON d.NIY = u.NIY "
+    txt += " WHERE d.status_dosen = 1 AND d.nama <> '-' "
+
+    if(dataQuery.prodi){
+        txt += " AND p.kode_prod = ? "
+        params.push(dataQuery.prodi)
+    }
+
+    sql.query(txt,params,function(err,res){
+        if(err) {
+            console.log(err)
+            callback(err,null)
+        }
+
+        if(res[0].total){
+            let hsl = {
+                label : 'dsn',
+                total : res[0].total
+             }    
+            callback(null, hsl);
+        }
+        else{
+            let hsl = {
+                label : 'dsn',
+                total : 0
+             }
+            callback(null, hsl);
+        }
+       
+    })
+}
+
 function getRiwayatPendidikan(data,callback){
     var params = [data.NIY]
     var txt = "select ID, NIY, tahun_lulus, jenjang, perguruan_tinggi, jurusan FROM pendidikan"
@@ -79,6 +116,7 @@ function getRekapDosenProdi(dataQuery, callback){
     txt += " JOIN data_diri d ON d.NIY = u.NIY "
     txt += " WHERE d.status_dosen = 1 AND d.nama <> '-' "
     
+
 
     if(dataQuery.fid){
         txt += " AND p.id_fak = ?"
@@ -875,4 +913,5 @@ Pegawai.getRekapDosenJabfung = getRekapDosenJabfung
 Pegawai.getRekapDosenJabfungFakultas = getRekapDosenJabfungFakultas
 Pegawai.getProfilDosen = getProfilDosen
 Pegawai.getRiwayatPendidikan = getRiwayatPendidikan
+Pegawai.countDosen = countDosen
 module.exports= Pegawai;

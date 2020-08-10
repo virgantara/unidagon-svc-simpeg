@@ -4,6 +4,9 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/simpeg/dosen/count')
+    .get(todoList.countDosen);
+
   app.route('/simpeg/dosen/riwayat/pendidikan')
     .get(todoList.getRiwayatPendidikan);
 
