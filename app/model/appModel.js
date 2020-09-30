@@ -356,7 +356,6 @@ function listHki(dataQuery, callback){
     txt += " JOIN jenis_luaran jl ON jl.id = h.jenis_hki_id "
     if(dataQuery.NIY){
         txt += " JOIN hki_author ja ON ja.hki_id = h.id WHERE jl.kode = 'HKI' "
-        txt += " WHERE jl.kode = 'HKI' "
         txt += " AND ja.NIY = ? "
         params.push(dataQuery.NIY)
     }
@@ -379,7 +378,10 @@ function listHki(dataQuery, callback){
     // params.push(dataQuery.offset)
 
     sql.query(txt, params, function(err, res){
-        if(err) callback(err,null)
+        if(err) {
+            console.log(err)
+            callback(err,null)
+        }
 
         callback(null, res)
     });
@@ -405,8 +407,10 @@ function rekapHki(dataQuery, callback){
 
     txt += " group by jenis_hki_id, jl.nama "
     sql.query(txt, params, function(err, res){
-        if(err) callback(err,null)
-
+        if(err) {
+            console.log(err)
+            callback(err,null)
+        }
         callback(null, res)
     });
 }
