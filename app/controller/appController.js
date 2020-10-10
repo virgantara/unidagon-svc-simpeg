@@ -4,6 +4,16 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getRekapDosenJabfungDetail = function(req, res) {
+  Simpeg.getRekapDosenJabfungDetail(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    response.ok(values, res);
+  });
+};
+
 exports.getListDosenJenjangFakultas = function(req, res) {
   Simpeg.getListDosenJenjangFakultas(
     req.query,

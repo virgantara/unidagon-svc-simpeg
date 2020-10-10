@@ -12,6 +12,30 @@ var Pegawai = function(task){
     
 };
 
+function getRekapDosenJabfungDetail(dataQuery, callback){
+    var params = []
+
+    txt = " select dd.jenjang_kode, jp.nama_lain2, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'GB' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as gb, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'LK' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as lk, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'L' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as l, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'AA' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as aa, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'TT' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as tt "
+    txt += " from data_diri dd "
+    txt += " JOIN m_jenjang_pendidikan jp ON jp.kode = dd.jenjang_kode "
+    txt += " WHERE dd.status_dosen = 1 "
+    txt += " GROUP BY dd.jenjang_kode, jp.nama_lain2 ORDER BY kode DESC"
+
+    sql.query(txt, params, function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        callback(null, res)
+    })
+}
+
 function getListDosenJenjangFakultas(dataQuery, callback){
     var params = []
 
@@ -974,5 +998,6 @@ Pegawai.getRiwayatPendidikan = getRiwayatPendidikan
 Pegawai.countDosen = countDosen
 Pegawai.getRekapDosenPerfakultas = getRekapDosenPerfakultas
 Pegawai.getListDosenJenjangFakultas = getListDosenJenjangFakultas
+Pegawai.getRekapDosenJabfungDetail = getRekapDosenJabfungDetail
 
 module.exports= Pegawai;
