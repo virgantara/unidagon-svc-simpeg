@@ -556,14 +556,11 @@ function listJurnal(dataQuery, callback){
     let params = []
     var txt = "SELECT j.id, judul, is_approved, nama_jurnal, eissn, pissn, volume, nomor, halaman, path_berkas, berkas as url, komentar, " 
     txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM jurnal_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.jurnal_id = j.id ) as authors "
-    txt += " from jurnal j "
+    txt += " from jurnal j JOIN jurnal_author ja ON ja.jurnal_id = j.id WHERE 1 "
     if(dataQuery.NIY){
-        txt += " JOIN jurnal_author ja ON ja.jurnal_id = j.id "
-        txt += " WHERE ja.NIY = ? "
+        txt += " AND ja.NIY = ? "
         params.push(dataQuery.NIY)
     }
-    else 
-        txt += " WHERE 1 "
 
     if(dataQuery.id){
         txt += " and id = ? "
@@ -593,8 +590,9 @@ function listJurnal(dataQuery, callback){
 function rekapJurnal(dataQuery, callback){
     let params = []
     var txt = "select jenis_publikasi_id as pub_id, pub.nama, count(*) as jumlah from jurnal j "
-    txt += " left join jurnal_author ja ON ja.jurnal_id = j.id "
+    txt += " join jurnal_author ja ON ja.jurnal_id = j.id "
     txt += " join jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " "
     txt += " WHERE is_approved = 1 "
 
     if(dataQuery.NIY){
@@ -718,16 +716,13 @@ function countJurnal(dataQuery, callback){
     var params = []
 
     var txt = "select tahun_terbit as tahun, count(*) as jumlah from jurnal j "
+    txt += " JOIN jurnal_author ja ON ja.jurnal_id = j.id WHERE 1 "
     if(dataQuery.NIY){
-        txt += " JOIN jurnal_author ja ON ja.jurnal_id = j.id "
-        txt += " WHERE ja.NIY = ? "
+        txt += " AND ja.NIY = ? "
         params.push(dataQuery.NIY)
 
     }
 
-    else
-        txt += " where 1 "
-    
     if(dataQuery.tahun){
         txt += " and tahun_terbit = ? "
         params.push(dataQuery.tahun)
