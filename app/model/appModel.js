@@ -12,6 +12,65 @@ var Pegawai = function(task){
     
 };
 
+function getListDosenJenjangFakultas(dataQuery, callback){
+    var params = []
+
+    txt = " select dd.NIDN, dd.nama as dosen, f.nama as fakultas, p.nama as prodi "
+    txt += " from data_diri dd "
+    txt += " JOIN user u ON u.NIY = dd.NIY "
+    txt += " JOIN prodi p ON u.id_prod = p.ID "
+    txt += " JOIN fakultas f ON f.ID = p.id_fak "
+    txt += " where dd.status_dosen = 1 "
+    if(dataQuery.jenjang){
+        txt += " and dd.jenjang_kode = ? "
+        params.push(dataQuery.jenjang)
+    }
+
+    if(dataQuery.fakultas){
+        txt += " and f.ID = ? "
+        params.push(dataQuery.fakultas)
+    }
+
+    sql.query(txt, params, function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        callback(null, res)
+    })
+}
+
+function getRekapDosenPerfakultas(dataQuery, callback){
+    
+    var params = []
+
+    txt = " select f.ID as fid, "
+    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S2' AND ff.ID = f.ID AND ddd.status_dosen = 1) as S2, "
+    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S3' AND ff.ID = f.ID AND ddd.status_dosen = 1) as S3, "
+    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'PROFESI' AND ff.ID = f.ID AND ddd.status_dosen = 1) as PROFESI "
+    txt += " from data_diri dd "
+    txt += " JOIN user u ON u.NIY = dd.NIY "
+    txt += " JOIN prodi p ON u.id_prod = p.ID "
+    txt += " JOIN fakultas f ON f.ID = p.id_fak "
+    txt += " where dd.status_dosen = 1 "
+    if(dataQuery.fid){
+        txt += " and f.ID = ? "
+        params.push(dataQuery.fid)
+    }
+
+    txt += " group by f.ID"
+
+    sql.query(txt, params, function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        callback(null, res)
+    })
+}
+
 function countDosen(dataQuery, callback){
     var params = []
 
@@ -913,4 +972,7 @@ Pegawai.getRekapDosenJabfungFakultas = getRekapDosenJabfungFakultas
 Pegawai.getProfilDosen = getProfilDosen
 Pegawai.getRiwayatPendidikan = getRiwayatPendidikan
 Pegawai.countDosen = countDosen
+Pegawai.getRekapDosenPerfakultas = getRekapDosenPerfakultas
+Pegawai.getListDosenJenjangFakultas = getListDosenJenjangFakultas
+
 module.exports= Pegawai;
