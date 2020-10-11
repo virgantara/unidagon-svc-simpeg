@@ -12,18 +12,59 @@ var Pegawai = function(task){
     
 };
 
+function getListDosenJenjangJabfung(dataQuery, callback){
+    var params = []
+
+    txt = " select dd.NIDN, dd.nama as dosen, f.nama as fakultas, p.nama as prodi, ja.nama as jabfung "
+    txt += " from data_diri dd "
+    txt += " JOIN user u ON u.NIY = dd.NIY "
+    txt += " JOIN prodi p ON u.id_prod = p.ID "
+    txt += " JOIN fakultas f ON f.ID = p.id_fak "
+    txt += " JOIN m_jabatan_akademik ja ON ja.id = dd.jabatan_fungsional "
+    txt += " where u.status = 'aktif' AND LENGTH(dd.NIDN) > 9 "
+    if(dataQuery.jenjang){
+        txt += " and dd.jenjang_kode = ? "
+        params.push(dataQuery.jenjang)
+    }
+
+    if(dataQuery.jabfung){
+        txt += " and ja.kode = ? "
+        params.push(dataQuery.jabfung)
+    }
+
+    if(dataQuery.status_dosen){
+        txt += " and dd.status_dosen = ? "
+        params.push(dataQuery.status_dosen)
+    }
+
+    sql.query(txt, params, function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        callback(null, res)
+    })
+}
+
+
 function getRekapDosenJabfungDetail(dataQuery, callback){
     var params = []
 
     txt = " select dd.jenjang_kode, jp.nama_lain2, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'GB' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as gb, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'LK' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as lk, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'L' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as l, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'AA' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as aa, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional WHERE ja.kode = 'TT' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = 1) as tt "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'GB' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as gb, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'LK' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as lk, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'L' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as l, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'AA' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as aa, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'TT' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9 ) as tt "
     txt += " from data_diri dd "
     txt += " JOIN m_jenjang_pendidikan jp ON jp.kode = dd.jenjang_kode "
-    txt += " WHERE dd.status_dosen = 1 "
+    txt += " JOIN user u ON u.NIY = dd.NIY "
+    txt += " WHERE u.status = 'aktif' AND LENGTH(dd.NIDN) > 9 "
+    if(dataQuery.status_dosen){
+        txt += " AND dd.status_dosen = ? "
+        params.push(dataQuery.status_dosen)
+    }
     txt += " GROUP BY dd.jenjang_kode, jp.nama_lain2 ORDER BY kode DESC"
 
     sql.query(txt, params, function(err, res){
@@ -44,10 +85,15 @@ function getListDosenJenjangFakultas(dataQuery, callback){
     txt += " JOIN user u ON u.NIY = dd.NIY "
     txt += " JOIN prodi p ON u.id_prod = p.ID "
     txt += " JOIN fakultas f ON f.ID = p.id_fak "
-    txt += " where dd.status_dosen = 1 "
+    txt += " where u.status = 'aktif' AND LENGTH(dd.NIDN) > 9 "
     if(dataQuery.jenjang){
         txt += " and dd.jenjang_kode = ? "
         params.push(dataQuery.jenjang)
+    }
+
+    if(dataQuery.status_dosen){
+        txt += " and dd.status_dosen = ? "
+        params.push(dataQuery.status_dosen)
     }
 
     if(dataQuery.fakultas){
@@ -70,14 +116,19 @@ function getRekapDosenPerfakultas(dataQuery, callback){
     var params = []
 
     txt = " select f.ID as fid, "
-    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S2' AND ff.ID = f.ID AND ddd.status_dosen = 1) as S2, "
-    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S3' AND ff.ID = f.ID AND ddd.status_dosen = 1) as S3, "
-    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'PROFESI' AND ff.ID = f.ID AND ddd.status_dosen = 1) as PROFESI "
+    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S2' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND uu.status = 'aktif' AND LENGTH(ddd.NIDN) > 9 ) as S2, "
+    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S3' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND uu.status = 'aktif' AND LENGTH(ddd.NIDN) > 9) as S3, "
+    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'PROFESI' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND uu.status = 'aktif' AND LENGTH(ddd.NIDN) > 9) as PROFESI "
     txt += " from data_diri dd "
     txt += " JOIN user u ON u.NIY = dd.NIY "
     txt += " JOIN prodi p ON u.id_prod = p.ID "
     txt += " JOIN fakultas f ON f.ID = p.id_fak "
-    txt += " where dd.status_dosen = 1 "
+    txt += " where u.status = 'aktif' AND LENGTH(dd.NIDN) > 9  "
+    if(dataQuery.status_dosen){
+        txt += " and dd.status_dosen = ? "
+        params.push(dataQuery.status_dosen)
+    }
+
     if(dataQuery.fid){
         txt += " and f.ID = ? "
         params.push(dataQuery.fid)
@@ -999,5 +1050,6 @@ Pegawai.countDosen = countDosen
 Pegawai.getRekapDosenPerfakultas = getRekapDosenPerfakultas
 Pegawai.getListDosenJenjangFakultas = getListDosenJenjangFakultas
 Pegawai.getRekapDosenJabfungDetail = getRekapDosenJabfungDetail
+Pegawai.getListDosenJenjangJabfung = getListDosenJenjangJabfung
 
 module.exports= Pegawai;
