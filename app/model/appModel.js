@@ -923,17 +923,17 @@ function getListDosen(data,callback){
     txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id"
     txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
     txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
-    txt += " WHERE d.nama <> '-' AND d.status_dosen = 1 "
+    txt += " WHERE d.nama <> '-' AND d.status_dosen = 1 AND u.status = 'aktif' "
 
     if(data.nama){
         txt += " AND d.nama LIKE '%"+data.nama+"%'"
         
     }
 
-    if(data.status){
-        txt += " AND u.status = ? "
-        params.push(data.status)
-    }
+    // if(data.status){
+    //     txt += " AND u.status = ? "
+    //     params.push(data.status)
+    // }
 
     if(data.jenjang_kode){
         txt += " AND d.jenjang_kode = ? "
