@@ -3,6 +3,7 @@ var sql = require('../../db.js');
 
 // var unique = require("array-unique").immutable;
 var moment = require('moment');
+var jsStringEscape = require('js-string-escape')
 // var async = require('async');
 // var await = require('await');
 var Promise = require('promise');
@@ -926,7 +927,7 @@ function getListDosen(data,callback){
     txt += " WHERE d.nama <> '-' AND d.status_dosen = 1 AND u.status = 'aktif' "
 
     if(data.nama){
-        txt += " AND d.nama LIKE '%"+data.nama+"%'"
+        txt += " AND d.nama LIKE '%"+jsStringEscape(data.nama)+"%'"
         
     }
 
@@ -979,7 +980,7 @@ function getListTendik(data,callback){
     txt += " WHERE 1 "
 
     if(data.nama){
-        txt += " AND t.nama LIKE '%"+data.nama+"%'"
+        txt += " AND t.nama LIKE '%"+jsStringEscape(data.nama)+"%'"
     }
 
     if(data.unit_id){
