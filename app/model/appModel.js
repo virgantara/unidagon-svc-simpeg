@@ -931,6 +931,11 @@ function getListDosen(data,callback){
         
     }
 
+    if(data.kode_unik){
+        txt += " AND d.kode_unik = ? "
+        params.push(data.kode_unik)
+    }
+
     // if(data.status){
     //     txt += " AND u.status = ? "
     //     params.push(data.status)
