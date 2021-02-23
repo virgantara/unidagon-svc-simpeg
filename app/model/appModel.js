@@ -915,7 +915,7 @@ function getListDosen(data,callback){
     txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, "
     txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
     txt += " bii.nama as bidang_ilmu_induk, d.permalink, bk.nama as kepakaran, "
-    txt += " bkp.nama as parent_kepakaran, d.expertise from data_diri d, d.kode_unik "
+    txt += " bkp.nama as parent_kepakaran, d.expertise, d.kode_unik from data_diri d "
     txt += " JOIN m_pangkat p on p.id = d.pangkat"
     txt += " JOIN m_jabatan_akademik j on j.id = d.jabatan_fungsional"
     txt += " JOIN user u ON u.NIY = d.NIY "
