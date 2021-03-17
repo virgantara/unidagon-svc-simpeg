@@ -13,6 +13,16 @@ var Pegawai = function(task){
     
 };
 
+function getListUnitKerja(callback){
+    let txt = "SELECT * FROM unit_kerja"
+    sql.query(txt,[],function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
 function getListDosenJenjangJabfung(dataQuery, callback){
     var params = []
 
@@ -1057,5 +1067,5 @@ Pegawai.getRekapDosenPerfakultas = getRekapDosenPerfakultas
 Pegawai.getListDosenJenjangFakultas = getListDosenJenjangFakultas
 Pegawai.getRekapDosenJabfungDetail = getRekapDosenJabfungDetail
 Pegawai.getListDosenJenjangJabfung = getListDosenJenjangJabfung
-
+Pegawai.getListUnitKerja = getListUnitKerja
 module.exports= Pegawai;

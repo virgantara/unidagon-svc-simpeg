@@ -4,13 +4,26 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+
+exports.getListUnitKerja = function(req, res) {
+  Simpeg.getListUnitKerja(
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+
 exports.getListDosenJenjangJabfung = function(req, res) {
   Simpeg.getListDosenJenjangJabfung(
     req.query,
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
@@ -20,7 +33,8 @@ exports.getRekapDosenJabfungDetail = function(req, res) {
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
@@ -30,7 +44,8 @@ exports.getListDosenJenjangFakultas = function(req, res) {
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
@@ -40,7 +55,8 @@ exports.getRekapDosenPerfakultas = function(req, res) {
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
@@ -50,7 +66,8 @@ exports.countDosen = function(req, res) {
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
@@ -60,7 +77,8 @@ exports.getRiwayatPendidikan = function(req, res) {
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
@@ -71,7 +89,8 @@ exports.getProfilDosen = function(req, res) {
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
@@ -82,7 +101,8 @@ exports.getRekapDosenJabfungFakultas = function(req, res) {
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
@@ -94,7 +114,8 @@ exports.getRekapDosenJabfung = function(req, res) {
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
@@ -105,7 +126,8 @@ exports.getRekapDosenProdi = function(req, res) {
     function(err, values) {    
     if (err)
       res.send(err);
-    response.ok(values, res);
+    else
+      response.ok(values, res);
   });
 };
 
