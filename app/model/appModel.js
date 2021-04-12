@@ -13,6 +13,49 @@ var Pegawai = function(task){
     
 };
 
+
+function getListAbdimas(dataQuery, callback){
+    let params = []
+    let txt = "SELECT p.ID as id, p.judul_penelitian_pengabdian as judul, tahun_kegiatan, dana_pt, dana_dikti, dana_institusi_lain, skema,jenis_kegiatan, "
+    txt += " tgl_mulai, tgl_akhir, tingkat, " 
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama) "
+    txt += " ORDER BY paa.id SEPARATOR ', ') FROM pengabdian_anggota paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_id = p.ID ) as authors FROM user u "
+    txt += " JOIN jabatan j ON j.NIY = u.NIY "
+    txt += " JOIN unit_kerja uk ON uk.id = j.unker_id "
+    txt += " JOIN pengabdian_anggota pa ON pa.NIY = u.NIY "
+    txt += " JOIN pengabdian p ON p.ID = pa.pengabdian_id "
+    txt += " WHERE j.jabatan_id = 13 "
+    if(dataQuery.parent_id){
+        txt += " AND uk.parent_id = ? "
+        params.push(dataQuery.parent_id)
+    }
+
+    if(dataQuery.is_ristek){
+        if(dataQuery.is_ristek == 'Y'){
+            txt += " AND p.dana_dikti <> 0 "    
+        }
+        
+        else if(dataQuery.is_ristek == 'N'){
+            txt += " AND (p.dana_pt <> 0 OR p.dana_institusi_lain <> 0) "
+        }    
+    }
+
+    if(dataQuery.tahun_kegiatan){
+        txt += " AND p.tahun_kegiatan = ? "
+        params.push(dataQuery.tahun_kegiatan)
+    }
+
+    txt += "GROUP BY p.ID, p.judul_penelitian_pengabdian, tahun_kegiatan, dana_pt, dana_dikti, dana_institusi_lain, skema, tgl_mulai, tgl_akhir, tingkat, jenis_kegiatan"
+
+    sql.query(txt,params,function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
 function getListUnitKerja(callback){
     let txt = "SELECT * FROM unit_kerja"
     sql.query(txt,[],function(err, res){
@@ -1068,4 +1111,5 @@ Pegawai.getListDosenJenjangFakultas = getListDosenJenjangFakultas
 Pegawai.getRekapDosenJabfungDetail = getRekapDosenJabfungDetail
 Pegawai.getListDosenJenjangJabfung = getListDosenJenjangJabfung
 Pegawai.getListUnitKerja = getListUnitKerja
+Pegawai.getListAbdimas = getListAbdimas
 module.exports= Pegawai;
