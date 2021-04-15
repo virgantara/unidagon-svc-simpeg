@@ -4,6 +4,116 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getListLuaranWirausaha = function(req, res) {
+  Simpeg.getListLuaranWirausaha(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListLuaranBuku = function(req, res) {
+  Simpeg.getListLuaranBuku(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListLuaranMitra = function(req, res) {
+  Simpeg.getListLuaranMitra(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListLuaranProduk = function(req, res) {
+  Simpeg.getListLuaranProduk(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListLuaranLain = function(req, res) {
+  Simpeg.getListLuaranLain(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListLuaranHki = function(req, res) {
+  Simpeg.getListLuaranHki(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListLuaranForum = function(req, res) {
+  Simpeg.getListLuaranForum(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListLuaranMediaMassa = function(req, res) {
+  Simpeg.getListLuaranMediaMassa(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListLuaranJurnal = function(req, res) {
+  Simpeg.getListLuaranJurnal(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListMitra = function(req, res) {
+  Simpeg.getListMitra(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.getListAbdimas = function(req, res) {
   Simpeg.getListAbdimas(
     req.query,

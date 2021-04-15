@@ -13,18 +13,269 @@ var Pegawai = function(task){
     
 };
 
+function getListLuaranWirausaha(dataQuery,callback){
+    let txt = "SELECT pj.id, pj.nama, pj.deskripsi, pj.tahun_pelaksanaan, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM pengabdian_luaran_authors paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_luaran_id = pj.id ) as authors "
+    txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.id) AS docs "
+    txt += " FROM wirausaha pj"
+    txt += " WHERE 1 "
+    let params = []
+    if(dataQuery.tahun){
+        txt += " AND tahun_pelaksanaan = ? "
+        params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.jenis_litab){
+        txt += " AND pj.jenis_litab = ? "
+        params.push(dataQuery.jenis_litab)
+    }
+
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
+function getListLuaranBuku(dataQuery,callback){
+    let txt = "SELECT pj.id, pj.judul, pj.penerbit, jp.nama as jenis, pj.ISBN, pj.vol,pj.tahun,  "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM pengabdian_luaran_authors paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_luaran_id = pj.uuid ) as authors "
+    txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.uuid)AS docs "
+    txt += " FROM buku pj"
+    txt += " JOIN jenis_luaran jp ON jp.id = pj.jenis_luaran_id WHERE 1 "
+    let params = []
+    if(dataQuery.tahun){
+        txt += " AND tahun = ? "
+        params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.jenis_litab){
+        txt += " AND pj.jenis_litab = ? "
+        params.push(dataQuery.jenis_litab)
+    }
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
+function getListLuaranMitra(dataQuery,callback){
+    let txt = "SELECT pj.id, pj.nama_mitra, pj.bidang_usaha, pj.lembaga, pj.no_badan_hukum,  pj.tahun_pelaksanaan, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM pengabdian_luaran_authors paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_luaran_id = pj.id ) as authors "
+    txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.id) AS docs "
+    txt += " FROM mitra_hukum pj"
+    txt += " WHERE 1 "
+    let params = []
+    if(dataQuery.tahun){
+        txt += " AND tahun_pelaksanaan = ? "
+        params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.jenis_litab){
+        txt += " AND pj.jenis_litab = ? "
+        params.push(dataQuery.jenis_litab)
+    }
+
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
+function getListLuaranProduk(dataQuery,callback){
+    let txt = "SELECT pj.id, pj.nama_produk, pj.lembaga, pj.nomor, pj.tahun_pelaksanaan, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM pengabdian_luaran_authors paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_luaran_id = pj.id ) as authors "
+    txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.id)AS docs "
+    txt += " FROM produk_standar pj"
+    txt += " WHERE 1 "
+    let params = []
+    if(dataQuery.tahun){
+        txt += " AND tahun_pelaksanaan = ? "
+        params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.jenis_litab){
+        txt += " AND pj.jenis_litab = ? "
+        params.push(dataQuery.jenis_litab)
+    }
+
+    if(dataQuery.jenis){
+        txt += " AND pj.jenis = ? "
+        params.push(dataQuery.jenis)
+    }
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
+function getListLuaranLain(dataQuery,callback){
+    let txt = "SELECT pj.id, pj.judul, pj.deskripsi, jp.nama as jenis, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM pengabdian_luaran_authors paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_luaran_id = pj.uuid ) as authors "
+    txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.uuid)AS docs "
+    txt += " FROM luaran_lain pj"
+    txt += " JOIN jenis_luaran jp ON jp.id = pj.jenis_luaran_id WHERE 1 "
+    let params = []
+    if(dataQuery.tahun){
+        txt += " AND tahun_pelaksanaan = ? "
+        params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.jenis_litab){
+        txt += " AND pj.jenis_litab = ? "
+        params.push(dataQuery.jenis_litab)
+    }
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
+
+function getListLuaranHki(dataQuery,callback){
+    let txt = "SELECT pj.id, pj.judul, pj.status_hki, jp.nama as jenis, pj.no_pendaftaran, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM pengabdian_luaran_authors paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_luaran_id = pj.uuid ) as authors "
+    txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.uuid)AS docs "
+    txt += " FROM hki pj"
+    txt += " JOIN jenis_luaran jp ON jp.id = pj.jenis_hki_id WHERE 1 "
+    let params = []
+    if(dataQuery.tahun){
+        txt += " AND tahun_pelaksanaan = ? "
+        params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.jenis_litab){
+        txt += " AND pj.jenis_litab = ? "
+        params.push(dataQuery.jenis_litab)
+    }
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
+function getListLuaranForum(dataQuery,callback){
+    let txt = "SELECT pj.id, pj.judul, pj.penyelenggara, jp.nama as jenis,pj.ISBN,pj.nama_forum, pj.tanggal_mulai, pj.tanggal_selesai, pj.link as url, pj.lokasi, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM pengabdian_luaran_authors paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_luaran_id = pj.uuid ) as authors "
+    txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.uuid)AS docs "
+    txt += " FROM konferensi pj"
+    txt += " JOIN tingkat jp ON jp.id = pj.tingkat_id WHERE 1 "
+    let params = []
+    if(dataQuery.tahun){
+        txt += " AND tahun = ? "
+        params.push(dataQuery.tahun)
+    }
+
+    if(dataQuery.jenis_litab){
+        txt += " AND pj.jenis_litab = ? "
+        params.push(dataQuery.jenis_litab)
+    }
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
+function getListLuaranMediaMassa(dataQuery,callback){
+    let txt = "SELECT pj.id, pj.judul, pj.nama_media, jp.nama as jenis,pj.url, pj.vol, pj.nomor, pj.halaman, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM pengabdian_luaran_authors paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_luaran_id = pj.id ) as authors "
+    txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.id)AS docs "
+    txt += " FROM pengabdian_media_massa pj"
+    txt += " JOIN jenis_luaran jp ON jp.id = pj.jenis_media_id WHERE 1 "
+    let params = []
+    if(dataQuery.tahun){
+        txt += " AND tanggal_terbit LIKE ? "
+        params.push(dataQuery.tahun+'%')
+    }
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
+function getListLuaranJurnal(dataQuery,callback){
+    let txt = "SELECT pj.id, pj.judul, pj.nama_jurnal, jp.nama as jenis,pj.url,pj.p_issn,pj.e_issn, pj.vol, pj.nomor, pj.hal_awal, pj.hal_akhir, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM pengabdian_jurnal_author paa JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_jurnal_id = pj.id ) as authors "
+    txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.id)AS docs "
+    txt += " FROM pengabdian_jurnal pj"
+    txt += " JOIN jenis_publikasi jp ON jp.id = pj.jenis_publikasi_id WHERE 1 "
+    let params = []
+    if(dataQuery.tahun){
+        txt += " AND tanggal_terbit LIKE ? "
+        params.push(dataQuery.tahun+'%')
+    }
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
+function getListMitra(dataQuery,callback){
+    let params = []
+    let txt = "SELECT pm.id, jm.nama as jenis, pm.nama, bidang_usaha, peningkatan_omzet, dana_pendamping FROM pengabdian_mitra pm "
+    txt += " JOIN jenis_mitra jm ON jm.id = pm.jenis_mitra_id WHERE 1 "
+
+    if(dataQuery.pengabdian_id){
+        txt += " AND pm.pengabdian_id = ? "
+        params.push(dataQuery.pengabdian_id)
+    }
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
 
 function getListAbdimas(dataQuery, callback){
     let params = []
-    let txt = "SELECT p.ID as id, p.judul_penelitian_pengabdian as judul, tahun_kegiatan, dana_pt, dana_dikti, dana_institusi_lain, skema,jenis_kegiatan, "
-    txt += " tgl_mulai, tgl_akhir, tingkat, " 
-    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama) "
+    let txt = "SELECT p.ID as id, p.judul_penelitian_pengabdian as judul, tahun_kegiatan, dana_pt, dana_dikti, dana_institusi_lain, skema, "
+    txt += " tgl_mulai, tgl_akhir, t.nama as tingkat, jk.nama as jenis_kegiatan, p.jumlah_mahasiswa, p.jumlah_staf, p.jumlah_alumni, " 
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
     txt += " ORDER BY paa.id SEPARATOR ', ') FROM pengabdian_anggota paa JOIN user uu ON uu.NIY = paa.NIY "
     txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_id = p.ID ) as authors FROM user u "
     txt += " JOIN jabatan j ON j.NIY = u.NIY "
+    
     txt += " JOIN unit_kerja uk ON uk.id = j.unker_id "
     txt += " JOIN pengabdian_anggota pa ON pa.NIY = u.NIY "
     txt += " JOIN pengabdian p ON p.ID = pa.pengabdian_id "
+    txt += " LEFT JOIN tingkat t ON t.id = p.tingkat "
+    txt += " LEFT JOIN jenis_kegiatan jk ON jk.id = p.jenis_kegiatan "
     txt += " WHERE j.jabatan_id = 13 "
     if(dataQuery.parent_id){
         txt += " AND uk.parent_id = ? "
@@ -1112,4 +1363,14 @@ Pegawai.getRekapDosenJabfungDetail = getRekapDosenJabfungDetail
 Pegawai.getListDosenJenjangJabfung = getListDosenJenjangJabfung
 Pegawai.getListUnitKerja = getListUnitKerja
 Pegawai.getListAbdimas = getListAbdimas
+Pegawai.getListMitra = getListMitra
+Pegawai.getListLuaranJurnal = getListLuaranJurnal
+Pegawai.getListLuaranMediaMassa = getListLuaranMediaMassa
+Pegawai.getListLuaranForum = getListLuaranForum
+Pegawai.getListLuaranHki =getListLuaranHki
+Pegawai.getListLuaranLain = getListLuaranLain
+Pegawai.getListLuaranProduk = getListLuaranProduk
+Pegawai.getListLuaranMitra = getListLuaranMitra
+Pegawai.getListLuaranBuku = getListLuaranBuku
+Pegawai.getListLuaranWirausaha = getListLuaranWirausaha
 module.exports= Pegawai;

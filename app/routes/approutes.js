@@ -4,6 +4,36 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/litab/abdimas/luaran/wirausaha')
+    .get(todoList.getListLuaranWirausaha);
+
+  app.route('/litab/abdimas/luaran/buku')
+    .get(todoList.getListLuaranBuku);
+
+  app.route('/litab/abdimas/luaran/mitra')
+    .get(todoList.getListLuaranMitra);
+
+  app.route('/litab/abdimas/luaran/produk')
+    .get(todoList.getListLuaranProduk);
+
+  app.route('/litab/abdimas/luaran/luaranlain')
+    .get(todoList.getListLuaranLain);
+
+  app.route('/litab/abdimas/luaran/hki')
+    .get(todoList.getListLuaranHki);
+
+  app.route('/litab/abdimas/luaran/forum')
+    .get(todoList.getListLuaranForum);
+
+  app.route('/litab/abdimas/luaran/mediamassa')
+    .get(todoList.getListLuaranMediaMassa);
+
+  app.route('/litab/abdimas/luaran/jurnal')
+    .get(todoList.getListLuaranJurnal);
+
+  app.route('/litab/abdimas/mitra')
+    .get(todoList.getListMitra);
+
   app.route('/simpeg/list/abdimas')
     .get(todoList.getListAbdimas);
 
