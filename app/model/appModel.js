@@ -532,6 +532,11 @@ function getProfilDosen(data,callback){
         params.push(data.NIY)
     }
 
+    if(data.telegram_username){
+        txt += " AND d.telegram_username = ? "
+        params.push(data.telegram_username)
+    }
+
     sql.query(txt,[params],function(err, res){
         if(err){
             console.log(err);
