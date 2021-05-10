@@ -512,7 +512,7 @@ function getRiwayatPendidikan(data,callback){
 function getProfilDosen(data,callback){
     var params = []
 
-    if(!data.permalink || !data.NIY || !data.telegram_username){
+    if(!data.permalink && !data.NIY && !data.telegram_username){
         callback(null, []);
     }
 
