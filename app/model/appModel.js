@@ -511,47 +511,54 @@ function getRiwayatPendidikan(data,callback){
 
 function getProfilDosen(data,callback){
     var params = []
-    var txt = "select d.NIY, d.NIDN, d.nama, d.gender, u.email, d.tempat_lahir, "
-    txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, "
-    txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
-    txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
-    txt += " d.permalink, d.expertise, u.uuid from data_diri d "
-    txt += " JOIN m_pangkat p on p.id = d.pangkat"
-    txt += " JOIN m_jabatan_akademik j on j.id = d.jabatan_fungsional"
-    txt += " JOIN user u ON u.NIY = d.NIY "
-    txt += " JOIN prodi pr ON pr.ID = u.id_prod "
-    txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
-    txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id "
-    txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
-    txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
-    txt += " WHERE 1  "
 
-    if(data.permalink){
-        txt += " AND d.permalink = ? "
-        params.push(data.permalink)
+    if(!data.permalink || !data.NIY || !data.telegram_username){
+        callback(null, []);
     }
 
-    if(data.NIY){
-        txt += " AND d.NIY = ? "
-        params.push(data.NIY)
-    }
+    else
+    {
+        var txt = "select d.NIY, d.NIDN, d.nama, d.gender, u.email, d.tempat_lahir, "
+        txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, "
+        txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
+        txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
+        txt += " d.permalink, d.expertise, u.uuid from data_diri d "
+        txt += " JOIN m_pangkat p on p.id = d.pangkat"
+        txt += " JOIN m_jabatan_akademik j on j.id = d.jabatan_fungsional"
+        txt += " JOIN user u ON u.NIY = d.NIY "
+        txt += " JOIN prodi pr ON pr.ID = u.id_prod "
+        txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
+        txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id "
+        txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
+        txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
+        txt += " WHERE 1  "
 
-    if(data.telegram_username){
-        txt += " AND d.telegram_username = ? "
-        params.push(data.telegram_username)
-    }
-
-    sql.query(txt,[params],function(err, res){
-        if(err){
-            console.log(err);
-            callback(err,null);
+        if(data.permalink){
+            txt += " AND d.permalink = ? "
+            params.push(data.permalink)
         }
-        else{
-            callback(null, res);
-            
+
+        if(data.NIY){
+            txt += " AND d.NIY = ? "
+            params.push(data.NIY)
         }
-    });
-  
+
+        if(data.telegram_username){
+            txt += " AND d.telegram_username = ? "
+            params.push(data.telegram_username)
+        }
+
+        sql.query(txt,[params],function(err, res){
+            if(err){
+                console.log(err);
+                callback(err,null);
+            }
+            else{
+                callback(null, res);
+                
+            }
+        });
+    }
 }
 
 
