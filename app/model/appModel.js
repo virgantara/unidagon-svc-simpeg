@@ -348,7 +348,8 @@ function getListDosenJenjangJabfung(dataQuery, callback){
             callback(err,null)
         }
 
-        callback(null, res)
+        else
+            callback(null, res)
     })
 }
 
@@ -378,7 +379,8 @@ function getRekapDosenJabfungDetail(dataQuery, callback){
             callback(err,null)
         }
 
-        callback(null, res)
+        else
+            callback(null, res)
     })
 }
 
@@ -412,7 +414,8 @@ function getListDosenJenjangFakultas(dataQuery, callback){
             callback(err,null)
         }
 
-        callback(null, res)
+        else
+            callback(null, res)
     })
 }
 
@@ -447,7 +450,8 @@ function getRekapDosenPerfakultas(dataQuery, callback){
             callback(err,null)
         }
 
-        callback(null, res)
+        else
+            callback(null, res)
     })
 }
 
@@ -572,7 +576,8 @@ function getRekapDosenProdi(dataQuery, callback){
     sql.query(txt,params,function(err,res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     })
 }
 
@@ -597,7 +602,8 @@ function getRekapDosenJabfungFakultas(dataQuery, callback){
     sql.query(txt,params,function(err,res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     })
 }
 
@@ -620,7 +626,8 @@ function getRekapDosenJabfung(dataQuery, callback){
     sql.query(txt,params,function(err,res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     })
 }
 
@@ -645,7 +652,8 @@ function getRekapDosenFakultas(dataQuery, callback){
     sql.query(txt,params,function(err,res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     })
 }
 
@@ -658,7 +666,8 @@ function verifikasiLuaranLain(dataPost, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     });
 }
 
@@ -671,7 +680,8 @@ function verifikasiHki(dataPost, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     });
 }
 
@@ -684,7 +694,8 @@ function verifikasiKonferensi(dataPost, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     });
 }
 
@@ -697,7 +708,8 @@ function verifikasiBuku(dataPost, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     });
 }
 
@@ -711,7 +723,8 @@ function verifikasiJurnal(dataPost, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     });
 }
 
@@ -752,7 +765,8 @@ function listLain(dataQuery, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else 
+            callback(null, res)
     });
 }
 
@@ -785,7 +799,8 @@ function rekapLain(dataQuery, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     });
 }
 
@@ -827,7 +842,8 @@ function listHki(dataQuery, callback){
             callback(err,null)
         }
 
-        callback(null, res)
+        else 
+            callback(null, res)
     });
 }
 
@@ -855,7 +871,8 @@ function rekapHki(dataQuery, callback){
             console.log(err)
             callback(err,null)
         }
-        callback(null, res)
+        else
+            callback(null, res)
     });
 }
 
@@ -897,7 +914,8 @@ function listKonferensi(dataQuery, callback){
             callback(err,null)  
         } 
 
-        callback(null, res)
+        else 
+            callback(null, res)
     });
 }
 
@@ -925,7 +943,8 @@ function rekapKonferensi(dataQuery, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else 
+            callback(null, res)
     });
 }
 
@@ -962,7 +981,8 @@ function listBuku(dataQuery, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err,null)
 
-        callback(null, res)
+        else 
+            callback(null, res)
     });
 }
 
@@ -989,9 +1009,11 @@ function rekapBuku(dataQuery, callback){
 
     txt += " group by pub_id, pub.nama "
     sql.query(txt, params, function(err, res){
-        if(err) callback(err,null)
+        if(err) 
+            callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     });
 
 }
@@ -1025,9 +1047,11 @@ function listJurnal(dataQuery, callback){
     // params.push(dataQuery.offset)
 
     sql.query(txt, params, function(err, res){
-        if(err) callback(err,null)
+        if(err) 
+            callback(err,null)
 
-        callback(null, res)
+        else 
+            callback(null, res)
     });
 }
 
@@ -1053,9 +1077,11 @@ function rekapJurnal(dataQuery, callback){
 
     txt += " group by jenis_publikasi_id, pub.nama "
     sql.query(txt, params, function(err, res){
-        if(err) callback(err,null)
+        if(err) 
+            callback(err,null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     });
 }
 
@@ -1087,7 +1113,8 @@ function countLuaranLain(dataQuery, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err, null)
 
-        callback(null, res)
+        else
+            callback(null, res)
     })
 }
 
@@ -1118,7 +1145,8 @@ function countHki(dataQuery, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err, null)
 
-        callback(null, res)
+        else 
+            callback(null, res)
     })
 }
 
@@ -1152,7 +1180,8 @@ function countKonferensi(dataQuery, callback){
     sql.query(txt, params, function(err, res){
         if(err) callback(err, null)
 
-        callback(null, res)
+        else 
+            callback(null, res)
     })
 }
 
@@ -1179,9 +1208,10 @@ function countJurnal(dataQuery, callback){
     txt += " group by tahun_terbit order by tahun_terbit "
 
     sql.query(txt, params, function(err, res){
-        if(err) callback(err, null)
-
-        callback(null, res)
+        if(err) 
+            callback(err, null)
+        else
+            callback(null, res)
     })
 }
 
@@ -1212,9 +1242,10 @@ function countBuku(dataQuery, callback){
     txt += " group by tahun order by tahun "
 
     sql.query(txt, params, function(err, res){
-        if(err) callback(err, null)
-
-        callback(null, res)
+        if(err) 
+            callback(err, null)
+        else
+            callback(null, res)
     })
 }
 
