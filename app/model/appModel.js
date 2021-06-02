@@ -15,7 +15,7 @@ var Pegawai = function(task){
 
 function getCountDataSerdos(dataQuery,callback){
     let params = []
-    let txt = "select p.nama, count(*) as total from data_diri d "
+    let txt = "select p.id, p.nama, count(*) as total from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " WHERE 1 "
@@ -27,7 +27,7 @@ function getCountDataSerdos(dataQuery,callback){
         txt += " AND d.no_sertifikat_pendidik is null "
     }
     
-    txt += " GROUP by p.nama"
+    txt += " GROUP by p.id, p.nama"
 
     sql.query(txt,params,function(err, res){
         if(err)
@@ -46,7 +46,7 @@ function getListDataSerdos(dataQuery,callback){
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " LEFT JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional "
     txt += " LEFT JOIN m_pangkat pa on pa.id = d.pangkat "
-    txt += " WHERE 1 "
+    txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
     if(dataQuery.status == '1'){
         txt += " AND d.no_sertifikat_pendidik is not null "
     }
