@@ -24,7 +24,7 @@ function getCountDataSerdos(dataQuery,callback){
     }
 
     else if(dataQuery.status == '-1'){
-        txt += " AND length(d.no_sertifikat_pendidik) < 6 "
+        txt += " AND length(d.no_sertifikat_pendidik) < 6 OR d.no_sertifikat_pendidik is NULL "
     }
     
     txt += " GROUP by p.id, p.nama"
