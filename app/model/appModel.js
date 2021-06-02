@@ -18,7 +18,7 @@ function getCountDataSerdos(dataQuery,callback){
     let txt = "select p.id, p.nama, count(*) as total from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
-    txt += " WHERE 1 "
+    txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
     if(dataQuery.status == '1'){
         txt += " AND d.no_sertifikat_pendidik is not null "
     }
