@@ -15,6 +15,16 @@ exports.getListDataSerdos = function(req, res) {
   });
 };
 
+exports.getCountDataNIDN = function(req, res) {
+  Simpeg.getCountDataNIDN(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
 
 exports.getCountDataSerdos = function(req, res) {
   Simpeg.getCountDataSerdos(

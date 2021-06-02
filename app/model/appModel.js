@@ -13,6 +13,30 @@ var Pegawai = function(task){
     
 };
 
+function getCountDataNIDN(dataQuery,callback){
+    let params = []
+    let txt = "select p.id, p.nama, count(*) as total from data_diri d "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
+    if(dataQuery.status == '1'){
+        txt += " AND length(d.NIDN) = 10 "
+    }
+
+    else if(dataQuery.status == '-1'){
+        txt += " AND length(d.NIDN) <> 10 "
+    }
+    
+    txt += " GROUP by p.id, p.nama"
+
+    sql.query(txt,params,function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null, res)
+    })
+}
+
 function getCountDataSerdos(dataQuery,callback){
     let params = []
     let txt = "select p.id, p.nama, count(*) as total from data_diri d "
@@ -1478,5 +1502,6 @@ Pegawai.getListLuaranMitra = getListLuaranMitra
 Pegawai.getListLuaranBuku = getListLuaranBuku
 Pegawai.getListLuaranWirausaha = getListLuaranWirausaha
 Pegawai.getCountDataSerdos = getCountDataSerdos
+Pegawai.getCountDataNIDN = getCountDataNIDN
 Pegawai.getListDataSerdos = getListDataSerdos
 module.exports= Pegawai;

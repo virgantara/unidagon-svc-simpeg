@@ -58,6 +58,9 @@ module.exports = function(app) {
   app.route('/simpeg/dosen/serdos/count')
     .get(todoList.getCountDataSerdos);
 
+  app.route('/simpeg/dosen/nidn/count')
+    .get(todoList.getCountDataNIDN);
+
   app.route('/simpeg/dosen/serdos/list')
     .get(todoList.getListDataSerdos);
 
