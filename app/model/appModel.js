@@ -20,11 +20,11 @@ function getCountDataSerdos(dataQuery,callback){
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
     if(dataQuery.status == '1'){
-        txt += " AND d.no_sertifikat_pendidik is not null "
+        txt += " AND d.no_sertifikat_pendidik is not null OR length(d.no_sertifikat_pendidik) > 6 "
     }
 
     else if(dataQuery.status == '-1'){
-        txt += " AND d.no_sertifikat_pendidik is null "
+        txt += " AND d.no_sertifikat_pendidik is null OR length(d.no_sertifikat_pendidik) < 6 "
     }
     
     txt += " GROUP by p.id, p.nama"
