@@ -37,6 +37,43 @@ function getCountDataSerdos(dataQuery,callback){
     })
 }
 
+function getListDataSerdos(dataQuery,callback){
+    let params = []
+    let txt = "select d.ID as dosenid, u.ID as userid, u.NIY, d.nama, d.NIDN, d.gelar_depan, d.gelar_belakang, p.nama as nama_prodi, p.kode_prod as kode_prodi, u.id_prod as id_prodi "
+    txt += " , d.nik, d.tanggal_lahir, ja.nama as jabfung, pa.golongan as gol, pa.nama as namagol, u.email "
+    txt += " from data_diri d "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " LEFT JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional "
+    txt += " LEFT JOIN m_pangkat pa on pa.id = d.pangkat "
+    txt += " WHERE 1 "
+    if(dataQuery.status == '1'){
+        txt += " AND d.no_sertifikat_pendidik is not null "
+    }
+
+    if(dataQuery.status == '-1'){
+        txt += " AND d.no_sertifikat_pendidik is null "
+    }
+
+    if(dataQuery.prodi_id){
+        txt += " AND u.id_prod = ? "
+        params.push(dataQuery.prodi_id)
+    }
+
+    if(dataQuery.kode_prodi){
+        txt += " AND p.kode_prod = ? "
+        params.push(dataQuery.kode_prodi)
+    }
+    
+
+    sql.query(txt,params,function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null, res)
+    })
+}
+
 function getListLuaranWirausaha(dataQuery,callback){
     let txt = "SELECT pj.id, pj.nama, pj.deskripsi, pj.tahun_pelaksanaan, "
     txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
@@ -1441,4 +1478,5 @@ Pegawai.getListLuaranMitra = getListLuaranMitra
 Pegawai.getListLuaranBuku = getListLuaranBuku
 Pegawai.getListLuaranWirausaha = getListLuaranWirausaha
 Pegawai.getCountDataSerdos = getCountDataSerdos
+Pegawai.getListDataSerdos = getListDataSerdos
 module.exports= Pegawai;
