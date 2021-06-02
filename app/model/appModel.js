@@ -13,6 +13,30 @@ var Pegawai = function(task){
     
 };
 
+function getCountDataSerdos(dataQuery,callback){
+    let params = []
+    let txt = "select p.nama, count(*) as total from data_diri d "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " WHERE 1 "
+    if(dataQuery.status == '1'){
+        txt += " AND d.no_sertifikat_pendidik is not null "
+    }
+
+    else if(dataQuery.status == '-1'){
+        txt += " AND d.no_sertifikat_pendidik is null "
+    }
+    
+    txt += " GROUP by p.nama"
+
+    sql.query(txt,params,function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null, res)
+    })
+}
+
 function getListLuaranWirausaha(dataQuery,callback){
     let txt = "SELECT pj.id, pj.nama, pj.deskripsi, pj.tahun_pelaksanaan, "
     txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
@@ -1416,4 +1440,5 @@ Pegawai.getListLuaranProduk = getListLuaranProduk
 Pegawai.getListLuaranMitra = getListLuaranMitra
 Pegawai.getListLuaranBuku = getListLuaranBuku
 Pegawai.getListLuaranWirausaha = getListLuaranWirausaha
+Pegawai.getCountDataSerdos = getCountDataSerdos
 module.exports= Pegawai;
