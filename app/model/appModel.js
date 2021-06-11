@@ -13,6 +13,27 @@ var Pegawai = function(task){
     
 };
 
+function countJabfung(dataQuery, callback){
+    let txt = "SELECT "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 1) as gb_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 2) as gb_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 1) as lk_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 2) as lk_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 1) as l_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 2) as l_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 1) as aa_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 2) as aa_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 1) as tp_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 2) as tp_dtt "
+    
+    sql.query(txt,[],function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null, res)
+    })
+}
+
 function getCountDataNIDN(dataQuery,callback){
     let params = []
     let txt = "select p.id, p.nama, count(*) as total from data_diri d "
@@ -1504,4 +1525,5 @@ Pegawai.getListLuaranWirausaha = getListLuaranWirausaha
 Pegawai.getCountDataSerdos = getCountDataSerdos
 Pegawai.getCountDataNIDN = getCountDataNIDN
 Pegawai.getListDataSerdos = getListDataSerdos
+Pegawai.countJabfung = countJabfung
 module.exports= Pegawai;
