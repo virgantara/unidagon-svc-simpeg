@@ -13,6 +13,24 @@ var Pegawai = function(task){
     
 };
 
+function countRekapIhsan(dataQuery, callback){
+    let txt = "SELECT "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND u.status = 'aktif' AND d.status_ihsan = 'FT') as dt_ft, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND u.status = 'aktif' AND d.status_ihsan = 'Kader') as dt_kader, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND u.status = 'aktif' AND d.status_ihsan = 'S1-Kader') as dt_s1_kader, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND u.status = 'aktif' AND d.status_ihsan = 'Non-FT') as dt_non_ft, "    
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'FT') as dtt_ft, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'Kader') as dtt_kader, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'S1-Kader') as dtt_s1_kader, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'Non-FT') as dtt_non_ft "
+    sql.query(txt,[],function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null, res)
+    })
+}
+
 function countJabfung(dataQuery, callback){
     let txt = "SELECT "
     txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 1 AND u.status = 'aktif') as gb_dt, "
@@ -1526,4 +1544,5 @@ Pegawai.getCountDataSerdos = getCountDataSerdos
 Pegawai.getCountDataNIDN = getCountDataNIDN
 Pegawai.getListDataSerdos = getListDataSerdos
 Pegawai.countJabfung = countJabfung
+Pegawai.countRekapIhsan = countRekapIhsan
 module.exports= Pegawai;
