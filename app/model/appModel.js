@@ -16,15 +16,15 @@ var Pegawai = function(task){
 function countJabfung(dataQuery, callback){
     let txt = "SELECT "
     txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 1 AND u.status = 'aktif') as gb_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 2 AND u.status = 'aktif') as gb_dtt, "
-    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 1 AND u.status = 'aktif') as lk_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 2 AND u.status = 'aktif') as lk_dtt, "
-    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 1 AND u.status = 'aktif') as l_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 2 AND u.status = 'aktif') as l_dtt, "
-    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 1 AND u.status = 'aktif') as aa_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 2 AND u.status = 'aktif') as aa_dtt, "
-    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 1 AND u.status = 'aktif') as tp_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 2 AND u.status = 'aktif') as tp_dtt "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 2 AND u.status = 'aktif') as gb_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 1 AND u.status = 'aktif') as lk_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 2 AND u.status = 'aktif') as lk_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 1 AND u.status = 'aktif') as l_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 2 AND u.status = 'aktif') as l_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 1 AND u.status = 'aktif') as aa_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 2 AND u.status = 'aktif') as aa_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 1 AND u.status = 'aktif') as tp_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 2 AND u.status = 'aktif') as tp_dtt "
     
     sql.query(txt,[],function(err, res){
         if(err)
