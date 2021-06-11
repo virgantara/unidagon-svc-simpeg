@@ -22,7 +22,11 @@ function countRekapIhsan(dataQuery, callback){
     txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'FT') as dtt_ft, "
     txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'Kader') as dtt_kader, "
     txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'S1-Kader') as dtt_s1_kader, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'Non-FT') as dtt_non_ft "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'Non-FT') as dtt_non_ft, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND u.status = 'aktif' AND LENGTH(NIDN) = 10) as dt_sudah_nidn, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND u.status = 'aktif' AND LENGTH(NIDN) <> 10) as dt_belum_nidn, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND u.status = 'aktif' AND LENGTH(no_sertifikat_pendidik) > 6) as dt_sudah_serdos, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND u.status = 'aktif' AND no_sertifikat_pendidik IS NULL OR no_sertifikat_pendidik = '') as dt_belum_serdos "
     sql.query(txt,[],function(err, res){
         if(err)
             callback(err,null)
