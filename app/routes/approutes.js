@@ -4,6 +4,12 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/simpeg/penelitian/list')
+    .get(todoList.listSimpegPenelitian);
+  
+  app.route('/simpeg/penelitian/count')
+    .get(todoList.countSimpegPenelitian);
+
   app.route('/simpeg/ihsan/count')
     .get(todoList.countRekapIhsan);
 
@@ -66,6 +72,9 @@ module.exports = function(app) {
 
   app.route('/simpeg/dosen/nidn/count')
     .get(todoList.getCountDataNIDN);
+
+  app.route('/simpeg/dosen/nidn/list')
+    .get(todoList.getListDataNIDN);
 
   app.route('/simpeg/dosen/serdos/list')
     .get(todoList.getListDataSerdos);

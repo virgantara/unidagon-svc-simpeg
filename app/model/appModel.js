@@ -13,6 +13,62 @@ var Pegawai = function(task){
     
 };
 
+function listSimpegPenelitian(dataQuery, callback){
+    let params = []
+
+    let txt = "SELECT t.*, d.nama as namadosen, p.nama as namaprodi FROM penelitian t "
+    txt += " JOIN data_diri d ON d.NIY = t.NIY "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += "JOIN prodi p ON p.ID = u.id_prod WHERE 1 "
+    if(dataQuery.prodi){
+        txt += " AND p.kode_prod = ? " 
+        params.push(dataQuery.prodi)
+    }
+
+    if(dataQuery.tahun){
+        txt += " AND tahun_dilaksanakan = ?"
+        params.push(dataQuery.tahun)
+    }
+    
+    if(dataQuery.sumber_dana){
+        txt += " AND jenis_sumber_dana = ? "
+        params.push(dataQuery.sumber_dana)    
+    }
+    
+    sql.query(txt,params,function(err, res){
+        if(err){
+            callback(err,null)
+        }
+
+        else{
+            callback(null, res)
+            
+        }
+    })
+}
+
+
+function countSimpegPenelitian(dataQuery, callback){
+    let params = []
+
+    let txt = "SELECT  "
+    txt += "(SELECT COUNT(*) as total FROM penelitian t JOIN data_diri d ON d.NIY = t.NIY JOIN user u ON u.NIY = t.NIY JOIN prodi p ON p.ID = u.id_prod WHERE p.kode_prod = "+dataQuery.prodi+" AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'mandiri' ) as mandiri, "
+    txt += "(SELECT COUNT(*) as total FROM penelitian t JOIN data_diri d ON d.NIY = t.NIY JOIN user u ON u.NIY = t.NIY JOIN prodi p ON p.ID = u.id_prod WHERE p.kode_prod = "+dataQuery.prodi+" AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'dalam' ) as dn, "
+    txt += "(SELECT COUNT(*) as total FROM penelitian t JOIN data_diri d ON d.NIY = t.NIY JOIN user u ON u.NIY = t.NIY JOIN prodi p ON p.ID = u.id_prod WHERE p.kode_prod = "+dataQuery.prodi+" AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'luar' ) as ln "
+    sql.query(txt,params,function(err, res){
+        if(err){
+            callback(err,null)
+        }
+
+        else{
+            if(res[0])
+                callback(null, res[0])
+            else
+                callback(null, 0)
+        }
+    })
+}
+
 function countRekapIhsan(dataQuery, callback){
     let txt = "SELECT "
     txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND u.status = 'aktif' AND d.status_ihsan = 'FT') as dt_ft, "
@@ -56,9 +112,50 @@ function countJabfung(dataQuery, callback){
     })
 }
 
+function getListDataNIDN(dataQuery,callback){
+    let params = []
+
+    let txt = "select d.ID as dosenid, u.ID as userid, u.NIY, d.nama, d.NIDN, d.gelar_depan, d.gelar_belakang, p.nama as nama_prodi, p.kode_prod as kode_prodi, u.id_prod as id_prodi "
+    txt += " , d.nik, d.tanggal_lahir, ja.nama as jabfung, pa.golongan as gol, pa.nama as namagol, u.email "
+    txt += " from data_diri d "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " LEFT JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional "
+    txt += " LEFT JOIN m_pangkat pa on pa.id = d.pangkat "
+    txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
+
+    if(dataQuery.prodi_id){
+        txt += " AND u.id_prod = ? "
+        params.push(dataQuery.prodi_id)
+    }
+
+    if(dataQuery.kode_prodi){
+        txt += " AND p.kode_prod = ? "
+        params.push(dataQuery.kode_prodi)
+    }
+    
+
+    if(dataQuery.status == '1'){
+        txt += " AND length(d.NIDN) = 10 "
+    }
+
+    else if(dataQuery.status == '-1'){
+        txt += " AND length(d.NIDN) <> 10 "
+    }
+
+    
+
+    sql.query(txt,params,function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null, res)
+    })
+}
+
 function getCountDataNIDN(dataQuery,callback){
     let params = []
-    let txt = "select p.id, p.nama, count(*) as total from data_diri d "
+    let txt = "select p.id, p.kode_prod, p.nama, count(*) as total from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
@@ -1546,7 +1643,10 @@ Pegawai.getListLuaranBuku = getListLuaranBuku
 Pegawai.getListLuaranWirausaha = getListLuaranWirausaha
 Pegawai.getCountDataSerdos = getCountDataSerdos
 Pegawai.getCountDataNIDN = getCountDataNIDN
+Pegawai.getListDataNIDN = getListDataNIDN
 Pegawai.getListDataSerdos = getListDataSerdos
 Pegawai.countJabfung = countJabfung
 Pegawai.countRekapIhsan = countRekapIhsan
+Pegawai.countSimpegPenelitian = countSimpegPenelitian
+Pegawai.listSimpegPenelitian = listSimpegPenelitian
 module.exports= Pegawai;

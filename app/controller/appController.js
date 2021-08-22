@@ -4,6 +4,28 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.listSimpegPenelitian = function(req, res) {
+  Simpeg.listSimpegPenelitian(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.countSimpegPenelitian = function(req, res) {
+  Simpeg.countSimpegPenelitian(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.countRekapIhsan = function(req, res) {
   Simpeg.countRekapIhsan(
     req.query,
@@ -29,6 +51,18 @@ exports.countJabfung = function(req, res) {
 
 exports.getListDataSerdos = function(req, res) {
   Simpeg.getListDataSerdos(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+
+exports.getListDataNIDN = function(req, res) {
+  Simpeg.getListDataNIDN(
     req.query,
     function(err, values) {    
     if (err)
