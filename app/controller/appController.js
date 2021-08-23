@@ -4,6 +4,17 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getListPublikasiJurnal = function(req, res) {
+  Simpeg.getListPublikasiJurnal(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.listSimpegPenelitian = function(req, res) {
   Simpeg.listSimpegPenelitian(
     req.query,

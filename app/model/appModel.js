@@ -13,6 +13,41 @@ var Pegawai = function(task){
     
 };
 
+function getListPublikasiJurnal(dataQuery,callback){
+    let params = [dataQuery.sd, dataQuery.ed]
+
+    let txt = "SELECT pj.*, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM publikasi_author paa "
+    txt += " JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN prodi p ON p.ID = uu.id_prod "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pub_id = pj.id) as authors "
+    txt += " FROM publikasi pj"
+    txt += " JOIN jenis_publikasi jp ON jp.id = pj.jenis_publikasi_id "
+    txt += " JOIN data_diri d ON d.NIY = pj.NIY "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " WHERE 1 "
+    txt += " AND tanggal_terbit BETWEEN ? AND ? "
+    if(dataQuery.prodi){
+        txt += " AND p.kode_prod = ? "
+        params.push(dataQuery.prodi)
+    }
+    
+    
+    if(dataQuery.jenis_publikasi){
+        txt += " AND jp.nama = ? "
+        params.push(dataQuery.jenis_publikasi)
+    }
+
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
 function listSimpegPenelitian(dataQuery, callback){
     let params = []
 
@@ -1649,4 +1684,5 @@ Pegawai.countJabfung = countJabfung
 Pegawai.countRekapIhsan = countRekapIhsan
 Pegawai.countSimpegPenelitian = countSimpegPenelitian
 Pegawai.listSimpegPenelitian = listSimpegPenelitian
+Pegawai.getListPublikasiJurnal = getListPublikasiJurnal
 module.exports= Pegawai;
