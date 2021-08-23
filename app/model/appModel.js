@@ -157,7 +157,12 @@ function getListDataNIDN(dataQuery,callback){
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " LEFT JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional "
     txt += " LEFT JOIN m_pangkat pa on pa.id = d.pangkat "
-    txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
+    txt += " WHERE u.status = 'aktif' "
+
+    if(dataQuery.status_dosen){
+        txt += " AND d.status_dosen = ? "
+        params.push(dataQuery.status_dosen)
+    }
 
     if(dataQuery.prodi_id){
         txt += " AND u.id_prod = ? "
@@ -193,7 +198,13 @@ function getCountDataNIDN(dataQuery,callback){
     let txt = "select p.id, p.kode_prod, p.nama, count(*) as total from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
-    txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
+    txt += " WHERE u.status = 'aktif' "
+
+    if(dataQuery.status_dosen){
+        txt += " AND d.status_dosen = ? "
+        params.push(dataQuery.status_dosen)
+    }
+
     if(dataQuery.status == '1'){
         txt += " AND length(d.NIDN) = 10 "
     }
@@ -205,8 +216,10 @@ function getCountDataNIDN(dataQuery,callback){
     txt += " GROUP by p.id, p.nama"
 
     sql.query(txt,params,function(err, res){
-        if(err)
+        if(err){
+            console.log(err)
             callback(err,null)
+        }
         else
             callback(null, res)
     })
