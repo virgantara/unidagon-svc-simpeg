@@ -13,6 +13,9 @@ var Pegawai = function(task){
     
 };
 
+// txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S3' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND uu.status = 'aktif' AND LENGTH(ddd.NIDN) > 9) as S3, "
+
+
 function listDosenJabfung(dataQuery, callback){
     let params = []
     let txt = "SELECT d.ID as dosenid, u.ID as userid, u.NIY, d.nama, d.NIDN, d.gelar_depan, "
@@ -24,6 +27,11 @@ function listDosenJabfung(dataQuery, callback){
     txt += " JOIN m_pangkat pa on pa.id = d.pangkat "
     txt += " JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id "
     txt += " WHERE u.status = 'aktif'  "
+
+    if(dataQuery.jenjang){
+        txt += " AND d.jenjang_kode = ? "
+        params.push(dataQuery.jenjang)
+    }
 
     if(dataQuery.jabfung){
         txt += " AND jf.kode = ? "
@@ -212,6 +220,11 @@ function getListDataNIDN(dataQuery,callback){
     if(dataQuery.jabfung){
         txt += " AND ja.kode = ? "
         params.push(dataQuery.jabfung)
+    }
+
+    if(dataQuery.jenjang){
+        txt += " AND d.jenjang_kode = ? "
+        params.push(dataQuery.jenjang)
     }
 
     if(dataQuery.status == '1'){
