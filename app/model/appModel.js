@@ -13,6 +13,41 @@ var Pegawai = function(task){
     
 };
 
+function listDosenJabfung(dataQuery, callback){
+    let params = []
+    let txt = "SELECT d.ID as dosenid, u.ID as userid, u.NIY, d.nama, d.NIDN, d.gelar_depan, "
+    txt += " d.gelar_belakang, p.nama as nama_prodi, p.kode_prod as kode_prodi, u.id_prod as id_prodi "
+    txt += " , d.nik, d.tanggal_lahir, jf.nama as jabfung, pa.golongan as gol, pa.nama as namagol, u.email "
+    txt += " FROM data_diri d "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " JOIN m_pangkat pa on pa.id = d.pangkat "
+    txt += " JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id "
+    txt += " WHERE u.status = 'aktif'  "
+
+    if(dataQuery.jabfung){
+        txt += " AND jf.kode = ? "
+        params.push(dataQuery.jabfung)
+    }
+
+    if(dataQuery.status_dosen){
+        txt += " and d.status_dosen = ? "
+        params.push(dataQuery.status_dosen)
+    }
+
+    if(dataQuery.prodi){
+        txt += " and p.kode_prod = ? "
+        params.push(dataQuery.prodi)   
+    }
+
+    sql.query(txt,params,function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null, res)
+    })
+}
+
 function getListPublikasiJurnal(dataQuery,callback){
     let params = [dataQuery.sd, dataQuery.ed]
 
@@ -174,6 +209,10 @@ function getListDataNIDN(dataQuery,callback){
         params.push(dataQuery.kode_prodi)
     }
     
+    if(dataQuery.jabfung){
+        txt += " AND ja.kode = ? "
+        params.push(dataQuery.jabfung)
+    }
 
     if(dataQuery.status == '1'){
         txt += " AND length(d.NIDN) = 10 "
@@ -1698,4 +1737,6 @@ Pegawai.countRekapIhsan = countRekapIhsan
 Pegawai.countSimpegPenelitian = countSimpegPenelitian
 Pegawai.listSimpegPenelitian = listSimpegPenelitian
 Pegawai.getListPublikasiJurnal = getListPublikasiJurnal
+Pegawai.listDosenJabfung = listDosenJabfung
+
 module.exports= Pegawai;
