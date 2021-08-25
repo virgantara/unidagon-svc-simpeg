@@ -4,6 +4,12 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/simpeg/luaranlain/list')
+    .get(todoList.getListLuaranLainEkinerja);
+
+  app.route('/simpeg/buku/list')
+    .get(todoList.getListBuku);
+
   app.route('/simpeg/hki/list')
     .get(todoList.getListHki);
 

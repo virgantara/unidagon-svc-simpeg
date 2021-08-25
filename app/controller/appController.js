@@ -4,6 +4,28 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getListBuku = function(req, res) {
+  Simpeg.getListBuku(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getListLuaranLainEkinerja = function(req, res) {
+  Simpeg.getListLuaranLainEkinerja(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.getListHki = function(req, res) {
   Simpeg.getListHki(
     req.query,
