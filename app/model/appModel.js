@@ -83,6 +83,10 @@ function getListPublikasiJurnal(dataQuery,callback){
         params.push(dataQuery.jenis_publikasi)
     }
 
+    if(dataQuery.sitasi){
+        txt += " AND pj.jumlah_sitasi > 0 "
+    }
+
     sql.query(txt, params, function(err, res){
         if(err)
             callback(err,null)
