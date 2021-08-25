@@ -35,7 +35,7 @@ function getListHki(dataQuery,callback){
     }
     
     if(dataQuery.jenis){
-        txt += " AND jp.nama = ? "
+        txt += " AND jp.keyword = ? "
         params.push(dataQuery.jenis)
     }
 
