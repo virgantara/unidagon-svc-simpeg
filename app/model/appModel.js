@@ -13,8 +13,39 @@ var Pegawai = function(task){
     
 };
 
-// txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S3' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND uu.status = 'aktif' AND LENGTH(ddd.NIDN) > 9) as S3, "
+function getListHki(dataQuery,callback){
+    let params = [dataQuery.sd, dataQuery.ed]
 
+    let txt = "SELECT pj.*, "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
+    txt += " ORDER BY paa.id SEPARATOR '#') FROM hki_author paa "
+    txt += " JOIN user uu ON uu.NIY = paa.NIY "
+    txt += " JOIN prodi p ON p.ID = uu.id_prod "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.hki_id = pj.id) as authors "
+    txt += " FROM hki pj"
+    txt += " JOIN jenis_luaran jp ON jp.id = pj.jenis_hki_id "
+    txt += " JOIN data_diri d ON d.NIY = pj.NIY "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " WHERE jp.kode = 'HKI' "
+    txt += " AND tanggal_terbit BETWEEN ? AND ? "
+    if(dataQuery.prodi){
+        txt += " AND p.kode_prod = ? "
+        params.push(dataQuery.prodi)
+    }
+    
+    if(dataQuery.jenis){
+        txt += " AND jp.nama = ? "
+        params.push(dataQuery.jenis)
+    }
+
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
 
 function listDosenJabfung(dataQuery, callback){
     let params = []
@@ -1289,16 +1320,16 @@ function listBuku(dataQuery, callback){
     var txt = "SELECT j.ID, komentar, ver,  judul, penerbit, ISBN, vol, link, tahun, "
     txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT('<strong>',dd.nama,'</strong>', ' <br>NIDN : ',dd.NIDN)  ORDER BY ha.id SEPARATOR '<br>') FROM buku_author ha JOIN user u ON u.NIY = ha.NIY JOIN data_diri dd ON dd.NIY = u.NIY WHERE ha.buku_id = j.id ) as authors "
     txt += " from buku j "
-    txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_luaran_id "
     if(dataQuery.NIY){
         txt += " JOIN buku_author ja ON ja.buku_id = j.id "
-        txt += " WHERE pub.kode = 'BUKU' "
+        txt += " WHERE 1 "
         txt += " AND ja.NIY = ? "
         params.push(dataQuery.NIY)
     }
 
     else
-        txt += " WHERE pub.kode = 'BUKU' "
+        txt += " WHERE 1 "
     
     
 
@@ -1315,7 +1346,10 @@ function listBuku(dataQuery, callback){
     // params.push(dataQuery.offset)
 
     sql.query(txt, params, function(err, res){
-        if(err) callback(err,null)
+        if(err){
+            console.log(err)
+             callback(err,null)   
+        }
 
         else 
             callback(null, res)
@@ -1324,18 +1358,19 @@ function listBuku(dataQuery, callback){
 
 function rekapBuku(dataQuery, callback){
     let params = []
-    var txt = "select jenis_publikasi_id as pub_id, pub.nama, count(*) as jumlah from buku j "
+    var txt = "select jenis_luaran_id as pub_id, pub.nama, count(*) as jumlah from buku j "
     
     // var txt = "SELECT j.ID, judul, penerbit, ISBN, vol, link, tahun from buku j "
-    txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_publikasi_id "
+    txt += " JOIN jenis_publikasi pub ON pub.id = j.jenis_luaran_id "
     if(dataQuery.NIY){
         txt += " left join buku_author ja ON ja.buku_id = j.id "
-        txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
+        txt += " WHERE ver = 'Sudah Diverifikasi'  "
         txt += " and ja.NIY = ? "
         params.push(dataQuery.NIY)   
     }
     else 
-        txt += " WHERE ver = 'Sudah Diverifikasi' AND pub.kode = 'BUKU' "
+        txt += " WHERE ver = 'Sudah Diverifikasi' "
+
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
@@ -1345,8 +1380,10 @@ function rekapBuku(dataQuery, callback){
 
     txt += " group by pub_id, pub.nama "
     sql.query(txt, params, function(err, res){
-        if(err) 
+        if(err) {
+            console.log(err)
             callback(err,null)
+        }
 
         else
             callback(null, res)
@@ -1555,16 +1592,16 @@ function countBuku(dataQuery, callback){
     var params = []
 
     var txt = "select tahun, count(*) as jumlah from buku b "
-    txt += " JOIN jenis_publikasi pub ON pub.id = b.jenis_publikasi_id "
     if(dataQuery.NIY){
         txt += " join buku_author ja ON ja.buku_id = j.id "
-        txt += " WHERE  pub.kode = 'BUKU' "
-        txt += " and ja.NIY = ? "
+        txt += " WHERE   "
+        txt += " ja.NIY = ? "
         params.push(dataQuery.NIY)   
     }
+
     else
-        txt += " WHERE  pub.kode = 'BUKU' "
-    // txt += " where ver = 'Sudah Diverifikasi' "
+        txt += " where 1 "
+    
     if(dataQuery.tahun){
         txt += " and tahun = ? "
         params.push(dataQuery.tahun)
@@ -1578,8 +1615,10 @@ function countBuku(dataQuery, callback){
     txt += " group by tahun order by tahun "
 
     sql.query(txt, params, function(err, res){
-        if(err) 
+        if(err) {
+            console.log(err)
             callback(err, null)
+        }
         else
             callback(null, res)
     })
@@ -1755,5 +1794,5 @@ Pegawai.countSimpegPenelitian = countSimpegPenelitian
 Pegawai.listSimpegPenelitian = listSimpegPenelitian
 Pegawai.getListPublikasiJurnal = getListPublikasiJurnal
 Pegawai.listDosenJabfung = listDosenJabfung
-
+Pegawai.getListHki = getListHki
 module.exports= Pegawai;

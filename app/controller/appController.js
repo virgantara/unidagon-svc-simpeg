@@ -4,6 +4,17 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getListHki = function(req, res) {
+  Simpeg.getListHki(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.listDosenJabfung = function(req, res) {
   Simpeg.listDosenJabfung(
     req.query,
