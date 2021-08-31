@@ -409,20 +409,32 @@ function getCountDataSerdos(dataQuery,callback){
 function getListDataSerdos(dataQuery,callback){
     let params = []
     let txt = "select d.ID as dosenid, u.ID as userid, u.NIY, d.nama, d.NIDN, d.gelar_depan, d.gelar_belakang, p.nama as nama_prodi, p.kode_prod as kode_prodi, u.id_prod as id_prodi "
-    txt += " , d.nik, d.tanggal_lahir, ja.nama as jabfung, pa.golongan as gol, pa.nama as namagol, u.email "
+    txt += " , d.nik, d.tanggal_lahir, ja.nama as jabfung, pa.golongan as gol, pa.nama as namagol, u.email, d.no_sertifikat_pendidik "
     txt += " from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " LEFT JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional "
     txt += " LEFT JOIN m_pangkat pa on pa.id = d.pangkat "
-    txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
+    txt += " WHERE u.status = 'aktif' "
+    
     if(dataQuery.status == '1'){
-        txt += " AND d.no_sertifikat_pendidik is not null "
+        txt += " AND length(d.no_sertifikat_pendidik) > 6 "
     }
 
-    if(dataQuery.status == '-1'){
-        txt += " AND d.no_sertifikat_pendidik is null "
+    else if(dataQuery.status == '-1'){
+        txt += " AND (d.no_sertifikat_pendidik is NULL OR d.no_sertifikat_pendidik = '') "
     }
+
+    if(dataQuery.status_dosen){
+        txt += " AND d.status_dosen = ? "
+        params.push(dataQuery.status_dosen)
+    }
+
+    else{
+        txt += " AND d.status_dosen = 1 "
+    }
+
+
 
     if(dataQuery.prodi_id){
         txt += " AND u.id_prod = ? "
@@ -434,7 +446,7 @@ function getListDataSerdos(dataQuery,callback){
         params.push(dataQuery.kode_prodi)
     }
     
-
+    txt += " ORDER BY d.nama ASC"
     sql.query(txt,params,function(err, res){
         if(err)
             callback(err,null)
