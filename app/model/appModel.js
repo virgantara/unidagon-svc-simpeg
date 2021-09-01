@@ -14,7 +14,7 @@ var Pegawai = function(task){
 };
 
 function getListPengelolaJurnal(dataQuery,callback){
-    let params = [dataQuery.sd]
+    let params = []
 
     let txt = "SELECT pj.*, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori "
     txt += " FROM pengelola_jurnal pj"
@@ -31,8 +31,10 @@ function getListPengelolaJurnal(dataQuery,callback){
     
 
     sql.query(txt, params, function(err, res){
-        if(err)
+        if(err){
+            console.log(err)
             callback(err,null)
+        }
         else
             callback(null,res)
     })
