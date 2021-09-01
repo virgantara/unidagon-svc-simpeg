@@ -16,7 +16,7 @@ var Pegawai = function(task){
 function getListOrasiIlmiah(dataQuery,callback){
     let params = [dataQuery.sd, dataQuery.ed]
 
-    let txt = "SELECT pj.*, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori, "
+    let txt = "SELECT pj.*,t.tingkat, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori, "
     txt += " bi.nama as bidang_ilmu, "
     txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
     txt += " d.permalink, d.expertise "
