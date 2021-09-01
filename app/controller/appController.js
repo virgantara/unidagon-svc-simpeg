@@ -4,6 +4,18 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getListOrasiIlmiah = function(req, res) {
+  Simpeg.getListOrasiIlmiah(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+
 exports.getListPengelolaJurnal = function(req, res) {
   Simpeg.getListPengelolaJurnal(
     req.query,

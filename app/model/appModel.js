@@ -13,6 +13,37 @@ var Pegawai = function(task){
     
 };
 
+function getListOrasiIlmiah(dataQuery,callback){
+    let params = [dataQuery.sd, dataQuery.ed]
+
+    let txt = "SELECT pj.*, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori "
+    txt += " FROM orasi_ilmiah pj"
+    txt += " JOIN kategori_kegiatan jp ON jp.id = pj.kategori_kegiatan_id "
+    txt += " JOIN data_diri d ON d.NIY = pj.NIY "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " WHERE tanggal_pelaksanaan BETWEEN ? AND ? "
+    
+    if(dataQuery.prodi){
+        txt += " AND p.kode_prod = ? "
+        params.push(dataQuery.prodi)
+    }
+
+    if(dataQuery.tingkat){
+        txt += " AND pj.tingkat_pertemuan_id = ? "
+        params.push(dataQuery.tingkat)
+    }
+
+    sql.query(txt, params, function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+        else
+            callback(null,res)
+    })
+}
+
 function getListPengelolaJurnal(dataQuery,callback){
     let params = [dataQuery.sd]
 
@@ -1910,5 +1941,5 @@ Pegawai.getListHki = getListHki
 Pegawai.getListLuaranLainEkinerja = getListLuaranLainEkinerja
 Pegawai.getListBuku = getListBuku
 Pegawai.getListPengelolaJurnal = getListPengelolaJurnal
-
+Pegawai.getListOrasiIlmiah = getListOrasiIlmiah
 module.exports= Pegawai;
