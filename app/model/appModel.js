@@ -14,7 +14,7 @@ var Pegawai = function(task){
 };
 
 function getListPengelolaJurnal(dataQuery,callback){
-    let params = [dataQuery.sd, dataQuery.ed]
+    let params = [dataQuery.sd]
 
     let txt = "SELECT pj.*, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori "
     txt += " FROM pengelola_jurnal pj"
@@ -22,8 +22,7 @@ function getListPengelolaJurnal(dataQuery,callback){
     txt += " JOIN data_diri d ON d.NIY = pj.NIY "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
-    txt += " WHERE 1 "
-    txt += " AND tgl_sk_tugas BETWEEN ? AND ? "
+    txt += " WHERE tgl_sk_tugas <= '"+dataQuery.sd+"' AND tgl_sk_tugas_selesai >= '"+dataQuery.sd+"' "
     
     if(dataQuery.prodi){
         txt += " AND p.kode_prod = ? "
