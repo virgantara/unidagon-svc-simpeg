@@ -16,12 +16,19 @@ var Pegawai = function(task){
 function getListOrasiIlmiah(dataQuery,callback){
     let params = [dataQuery.sd, dataQuery.ed]
 
-    let txt = "SELECT pj.*, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori "
+    let txt = "SELECT pj.*, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori, "
+    txt += " bi.nama as bidang_ilmu, "
+    txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
+    txt += " d.permalink, d.expertise "
     txt += " FROM orasi_ilmiah pj"
     txt += " JOIN kategori_kegiatan jp ON jp.id = pj.kategori_kegiatan_id "
     txt += " JOIN data_diri d ON d.NIY = pj.NIY "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
+    txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id "
+    txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
+    txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
     txt += " WHERE tanggal_pelaksanaan BETWEEN ? AND ? "
     
     if(dataQuery.prodi){
