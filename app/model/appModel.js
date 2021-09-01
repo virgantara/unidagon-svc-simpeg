@@ -25,6 +25,7 @@ function getListOrasiIlmiah(dataQuery,callback){
     txt += " JOIN data_diri d ON d.NIY = pj.NIY "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " JOIN tingkat t ON t.id = pj.tingkat_pertemuan_id "
     txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
     txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id "
     txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
