@@ -13,6 +13,32 @@ var Pegawai = function(task){
     
 };
 
+function getListPengelolaJurnal(dataQuery,callback){
+    let params = [dataQuery.sd, dataQuery.ed]
+
+    let txt = "SELECT pj.*, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori "
+    txt += " FROM pengelola_jurnal pj"
+    txt += " JOIN kategori_kegiatan jp ON jp.id = pj.kategori_kegiatan_id "
+    txt += " JOIN data_diri d ON d.NIY = pj.NIY "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " WHERE 1 "
+    txt += " AND tgl_sk_tugas BETWEEN ? AND ? "
+    
+    if(dataQuery.prodi){
+        txt += " AND p.kode_prod = ? "
+        params.push(dataQuery.prodi)
+    }
+    
+
+    sql.query(txt, params, function(err, res){
+        if(err)
+            callback(err,null)
+        else
+            callback(null,res)
+    })
+}
+
 function getListLuaranLainEkinerja(dataQuery,callback){
     let params = [dataQuery.sd, dataQuery.ed]
 
@@ -1882,4 +1908,6 @@ Pegawai.listDosenJabfung = listDosenJabfung
 Pegawai.getListHki = getListHki
 Pegawai.getListLuaranLainEkinerja = getListLuaranLainEkinerja
 Pegawai.getListBuku = getListBuku
+Pegawai.getListPengelolaJurnal = getListPengelolaJurnal
+
 module.exports= Pegawai;

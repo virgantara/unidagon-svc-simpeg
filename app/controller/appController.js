@@ -4,6 +4,17 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getListPengelolaJurnal = function(req, res) {
+  Simpeg.getListPengelolaJurnal(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.getListBuku = function(req, res) {
   Simpeg.getListBuku(
     req.query,
