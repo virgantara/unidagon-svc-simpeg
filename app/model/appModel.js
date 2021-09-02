@@ -13,6 +13,46 @@ var Pegawai = function(task){
     
 };
 
+
+function getListVisitingScientist(dataQuery,callback){
+    let params = [dataQuery.sd, dataQuery.ed]
+
+    let txt = "SELECT pj.*,t.nama as tingkat, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori, "
+    txt += " bi.nama as bidang_ilmu, "
+    txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
+    txt += " d.permalink, d.expertise "
+    txt += " FROM visiting_scientist pj"
+    txt += " JOIN kategori_kegiatan jp ON jp.id = pj.kategori_kegiatan_id "
+    txt += " JOIN data_diri d ON d.NIY = pj.NIY "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " JOIN tingkat t ON t.id = pj.tingkat "
+    txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
+    txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id "
+    txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
+    txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
+    txt += " WHERE tanggal_pelaksanaan BETWEEN ? AND ? "
+    
+    if(dataQuery.prodi){
+        txt += " AND p.kode_prod = ? "
+        params.push(dataQuery.prodi)
+    }
+
+    if(dataQuery.tingkat){
+        txt += " AND pj.tingkat = ? "
+        params.push(dataQuery.tingkat)
+    }
+
+    sql.query(txt, params, function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+        else
+            callback(null,res)
+    })
+}
+
 function getListOrasiIlmiah(dataQuery,callback){
     let params = [dataQuery.sd, dataQuery.ed]
 
@@ -55,19 +95,32 @@ function getListOrasiIlmiah(dataQuery,callback){
 function getListPengelolaJurnal(dataQuery,callback){
     let params = [dataQuery.sd]
 
-    let txt = "SELECT pj.*, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori "
+    let txt = "SELECT pj.*,t.nama as tingkat, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori, "
+    txt += " bi.nama as bidang_ilmu, "
+    txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
+    txt += " d.permalink, d.expertise "
     txt += " FROM pengelola_jurnal pj"
     txt += " JOIN kategori_kegiatan jp ON jp.id = pj.kategori_kegiatan_id "
     txt += " JOIN data_diri d ON d.NIY = pj.NIY "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " LEFT JOIN tingkat t ON t.id = pj.tingkat "
+    txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
+    txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id "
+    txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
+    txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
+    
     txt += " WHERE ? >= tgl_sk_tugas  AND (tgl_sk_tugas <= '"+dataQuery.tgl+"' AND tgl_sk_tugas_selesai >= '"+dataQuery.tgl+"') "
     
     if(dataQuery.prodi){
         txt += " AND p.kode_prod = ? "
         params.push(dataQuery.prodi)
     }
-    
+        
+    if(dataQuery.tingkat){
+        txt += " AND pj.tingkat_pertemuan_id = ? "
+        params.push(dataQuery.tingkat)
+    }
 
     sql.query(txt, params, function(err, res){
         if(err){
@@ -1950,4 +2003,6 @@ Pegawai.getListLuaranLainEkinerja = getListLuaranLainEkinerja
 Pegawai.getListBuku = getListBuku
 Pegawai.getListPengelolaJurnal = getListPengelolaJurnal
 Pegawai.getListOrasiIlmiah = getListOrasiIlmiah
+Pegawai.getListVisitingScientist = getListVisitingScientist
+
 module.exports= Pegawai;
