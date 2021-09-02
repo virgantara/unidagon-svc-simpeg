@@ -110,7 +110,7 @@ function getListPengelolaJurnal(dataQuery,callback){
     txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
     txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
     
-    txt += " WHERE ? >= tgl_sk_tugas  AND (tgl_sk_tugas <= '"+dataQuery.tgl+"' AND tgl_sk_tugas_selesai >= '"+dataQuery.tgl+"') "
+    txt += " WHERE ? <= tgl_sk_tugas_selesai  AND (tgl_sk_tugas <= '"+dataQuery.tgl+"' AND tgl_sk_tugas_selesai >= '"+dataQuery.tgl+"') "
     
     if(dataQuery.prodi){
         txt += " AND p.kode_prod = ? "
