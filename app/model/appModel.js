@@ -93,7 +93,7 @@ function getListOrasiIlmiah(dataQuery,callback){
 }
 
 function getListPengelolaJurnal(dataQuery,callback){
-    let params = [dataQuery.sd]
+    let params = []
 
     let txt = "SELECT pj.*,t.nama as tingkat, d.nama, d.gelar_depan, d.gelar_belakang, jp.nama as nama_kategori, "
     txt += " bi.nama as bidang_ilmu, "
@@ -110,7 +110,10 @@ function getListPengelolaJurnal(dataQuery,callback){
     txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
     txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
     
-    txt += " WHERE ? <= tgl_sk_tugas_selesai  AND (tgl_sk_tugas <= '"+dataQuery.tgl+"' AND tgl_sk_tugas_selesai >= '"+dataQuery.tgl+"') "
+    txt += " WHERE "
+    txt += "    (tgl_sk_tugas BETWEEN '"+dataQuery.sd+"' AND '"+dataQuery.ed+"' OR "
+    txt += "    tgl_sk_tugas_selesai BETWEEN '"+dataQuery.sd+"' AND '"+dataQuery.ed+"' OR "
+    txt += "    '"+dataQuery.sd+"' BETWEEN tgl_sk_tugas AND tgl_sk_tugas_selesai) "
     
     if(dataQuery.prodi){
         txt += " AND p.kode_prod = ? "
