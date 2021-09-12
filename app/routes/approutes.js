@@ -28,11 +28,17 @@ module.exports = function(app) {
   app.route('/simpeg/jurnal/list')
     .get(todoList.getListPublikasiJurnal);
 
+  app.route('/simpeg/pengabdian/list')
+    .get(todoList.listSimpegPengabdian);
+
   app.route('/simpeg/penelitian/list')
     .get(todoList.listSimpegPenelitian);
   
   app.route('/simpeg/penelitian/count')
     .get(todoList.countSimpegPenelitian);
+
+  app.route('/simpeg/pengabdian/count')
+    .get(todoList.countSimpegPengabdian);
 
   app.route('/simpeg/ihsan/count')
     .get(todoList.countRekapIhsan);

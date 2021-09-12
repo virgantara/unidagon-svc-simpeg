@@ -318,6 +318,61 @@ function getListPublikasiJurnal(dataQuery,callback){
     })
 }
 
+function listSimpegPengabdian(dataQuery, callback){
+    let params = []
+
+    let txt = "SELECT t.*, d.nama as namadosen, p.nama as namaprodi FROM pengabdian t "
+    txt += " JOIN data_diri d ON d.NIY = t.NIY "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += "JOIN prodi p ON p.ID = u.id_prod WHERE 1 "
+    if(dataQuery.prodi){
+        txt += " AND p.kode_prod = ? " 
+        params.push(dataQuery.prodi)
+    }
+
+    if(dataQuery.tahun){
+        txt += " AND tahun_dilaksanakan = ?"
+        params.push(dataQuery.tahun)
+    }
+    
+    if(dataQuery.sumber_dana){
+        txt += " AND jenis_sumber_dana = ? "
+        params.push(dataQuery.sumber_dana)    
+    }
+    
+    sql.query(txt,params,function(err, res){
+        if(err){
+            callback(err,null)
+        }
+
+        else{
+            callback(null, res)
+            
+        }
+    })
+}
+
+function countSimpegPengabdian(dataQuery, callback){
+    let params = []
+
+    let txt = "SELECT  "
+    txt += "(SELECT COUNT(*) as total FROM pengabdian t JOIN data_diri d ON d.NIY = t.NIY JOIN user u ON u.NIY = t.NIY JOIN prodi p ON p.ID = u.id_prod WHERE p.kode_prod = "+dataQuery.prodi+" AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'mandiri' ) as mandiri, "
+    txt += "(SELECT COUNT(*) as total FROM pengabdian t JOIN data_diri d ON d.NIY = t.NIY JOIN user u ON u.NIY = t.NIY JOIN prodi p ON p.ID = u.id_prod WHERE p.kode_prod = "+dataQuery.prodi+" AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'dalam' ) as dn, "
+    txt += "(SELECT COUNT(*) as total FROM pengabdian t JOIN data_diri d ON d.NIY = t.NIY JOIN user u ON u.NIY = t.NIY JOIN prodi p ON p.ID = u.id_prod WHERE p.kode_prod = "+dataQuery.prodi+" AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'luar' ) as ln "
+    sql.query(txt,params,function(err, res){
+        if(err){
+            callback(err,null)
+        }
+
+        else{
+            if(res[0])
+                callback(null, res[0])
+            else
+                callback(null, 0)
+        }
+    })
+}
+
 function listSimpegPenelitian(dataQuery, callback){
     let params = []
 
@@ -1998,7 +2053,9 @@ Pegawai.getListDataSerdos = getListDataSerdos
 Pegawai.countJabfung = countJabfung
 Pegawai.countRekapIhsan = countRekapIhsan
 Pegawai.countSimpegPenelitian = countSimpegPenelitian
+Pegawai.countSimpegPengabdian = countSimpegPengabdian
 Pegawai.listSimpegPenelitian = listSimpegPenelitian
+Pegawai.listSimpegPengabdian = listSimpegPengabdian
 Pegawai.getListPublikasiJurnal = getListPublikasiJurnal
 Pegawai.listDosenJabfung = listDosenJabfung
 Pegawai.getListHki = getListHki
