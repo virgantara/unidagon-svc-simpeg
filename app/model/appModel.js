@@ -1134,7 +1134,7 @@ function getRiwayatPendidikan(data,callback){
 function getProfilDosen(data,callback){
     var params = []
 
-    var txt = "select d.NIY, d.NIDN, d.nama, d.gender, u.email, d.tempat_lahir, "
+    var txt = "select d.NIY, d.NIDN, d.gelar_depan, d.gelar_belakang, d.nama, d.gender, u.email, d.tempat_lahir, "
     txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, "
     txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
     txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
