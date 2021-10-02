@@ -476,12 +476,18 @@ function getListDataNIDN(dataQuery,callback){
     let params = []
 
     let txt = "select d.ID as dosenid, u.ID as userid, u.NIY, d.nama, d.NIDN, d.gelar_depan, d.gelar_belakang, p.nama as nama_prodi, p.kode_prod as kode_prodi, u.id_prod as id_prodi "
-    txt += " , d.nik, d.tanggal_lahir, ja.nama as jabfung, pa.golongan as gol, pa.nama as namagol, u.email "
+    txt += " , d.nik, d.tanggal_lahir, ja.nama as jabfung, pa.golongan as gol, pa.nama as namagol, u.email, bi.nama as bidang_ilmu, "
+    txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
+    txt += " d.permalink, d.expertise "
     txt += " from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " LEFT JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional "
     txt += " LEFT JOIN m_pangkat pa on pa.id = d.pangkat "
+    txt += " LEFT JOIN bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id"
+    txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id "
+    txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
+    txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
     txt += " WHERE u.status = 'aktif' "
 
     if(dataQuery.status_dosen){
