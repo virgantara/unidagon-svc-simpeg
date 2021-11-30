@@ -1,4 +1,6 @@
 'user strict';
+const { v4: uuidv4 } = require('uuid');
+
 var sql = require('../../db.js');
 
 // var unique = require("array-unique").immutable;
@@ -13,6 +15,111 @@ var Pegawai = function(task){
     
 };
 
+function insertKehadiran(dataPost, callback){
+    if(dataPost.tanggal && dataPost.rfid){
+        let p = local_getDataByRFID(dataPost.rfid)
+
+        p.then(result => {
+
+            if(result){
+                let uuid = uuidv4()
+                let params = [uuid, result.NIY, '1',dataPost.tanggal]
+                let txt = "INSERT INTO kehadiran (id, niy, status_kehadiran, tanggal) "
+                txt += " VALUES (?,?,?,?) "
+                sql.query(txt, params, function(err, res){
+                    if(err){
+                        console.log(err)
+                        callback(null, err)
+                        // callback(err, null)
+                    }
+
+                    else{
+                        callback(null, {
+
+                            'code' : 200,
+                            'msg' : 'data inserted'
+                        })
+                    }
+                })
+            }
+
+            else{
+                callback(null, {
+
+                    'code' : 404,
+                    'msg' : 'user not found'
+                })
+            }
+            
+
+        }).catch(err => {
+            console.log(err)
+            callback(null, err)
+        })
+    }
+
+    else{
+        callback(null, {
+
+            'code' : 405,
+            'msg' : 'parameter is incomplete. Missing tanggal or rfid'
+        })
+    }
+    
+
+    
+}
+
+function getDataByRFID(dataQuery, callback){
+    let p = local_getDataByRFID(dataQuery.rfid)
+
+    p.then(result => {
+        callback(null, result)
+    }).catch(err => {
+        console.log(err)
+        callback(err, null)
+    })
+}
+
+function local_getDataByRFID(rfid){
+
+    return new Promise((resolve, reject) => {
+        let params = []
+
+        let txt = "SELECT NIY, username, email, nama, uuid, id_prod, access_role, rfid "
+        txt += " FROM user WHERE 1 "
+        if(rfid){
+            txt += " AND rfid = ? "
+            params.push(rfid)
+        }
+
+        else{
+            txt += " AND rfid = '-' "
+        }
+
+        txt += " LIMIT 1 "
+
+        sql.query(txt, params, function(err, res){
+            if(err){
+                console.log(err)
+                reject(err)
+            }
+
+            else{
+                if(res && res[0]){
+                    resolve(res[0])    
+                }
+
+                else{
+                    resolve(null)
+                }
+                
+            }
+        })
+    })
+
+    
+}
 
 function getListVisitingScientist(dataQuery,callback){
     let params = [dataQuery.sd, dataQuery.ed]
@@ -2070,5 +2177,6 @@ Pegawai.getListBuku = getListBuku
 Pegawai.getListPengelolaJurnal = getListPengelolaJurnal
 Pegawai.getListOrasiIlmiah = getListOrasiIlmiah
 Pegawai.getListVisitingScientist = getListVisitingScientist
-
+Pegawai.getDataByRFID = getDataByRFID
+Pegawai.insertKehadiran = insertKehadiran
 module.exports= Pegawai;

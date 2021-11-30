@@ -4,6 +4,28 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.insertKehadiran = function(req, res) {
+  Simpeg.insertKehadiran(
+    req.body,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getDataByRFID = function(req, res) {
+  Simpeg.getDataByRFID(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.getListVisitingScientist = function(req, res) {
   Simpeg.getListVisitingScientist(
     req.query,

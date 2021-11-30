@@ -4,6 +4,12 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/simpeg/kehadiran')
+    .post(todoList.insertKehadiran);
+
+  app.route('/simpeg/rfid/')
+    .get(todoList.getDataByRFID);
+
   app.route('/simpeg/visitingscientist/list')
     .get(todoList.getListVisitingScientist);
 
