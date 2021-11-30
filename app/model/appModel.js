@@ -4,7 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 var sql = require('../../db.js');
 
 // var unique = require("array-unique").immutable;
-var moment = require('moment');
+// var moment = require('moment');
+var moment = require('moment-timezone');
 var jsStringEscape = require('js-string-escape')
 // var async = require('async');
 // var await = require('await');
@@ -16,16 +17,18 @@ var Pegawai = function(task){
 };
 
 function insertKehadiran(dataPost, callback){
-    if(dataPost.tanggal && dataPost.rfid){
+    if(dataPost.lokasi && dataPost.rfid){
         let p = local_getDataByRFID(dataPost.rfid)
 
         p.then(result => {
 
             if(result){
                 let uuid = uuidv4()
-                let params = [uuid, result.NIY, '1',dataPost.tanggal]
-                let txt = "INSERT INTO kehadiran (id, niy, status_kehadiran, tanggal) "
-                txt += " VALUES (?,?,?,?) "
+                let tgl = new Date()
+                let tanggal = moment.tz('Asia/Jakarta').utc(tgl).format('YYYY-MM-DD HH:mm:ss')
+                let params = [uuid, result.NIY, '1', dataPost.lokasi, tanggal]
+                let txt = "INSERT INTO kehadiran (id, niy, status_kehadiran, lokasi,tanggal_checkin) "
+                txt += " VALUES (?,?,?,?,?) "
                 sql.query(txt, params, function(err, res){
                     if(err){
                         console.log(err)
@@ -62,7 +65,7 @@ function insertKehadiran(dataPost, callback){
         callback(null, {
 
             'code' : 405,
-            'msg' : 'parameter is incomplete. Missing tanggal or rfid'
+            'msg' : 'parameter is incomplete. Missing lokasi or rfid'
         })
     }
     
