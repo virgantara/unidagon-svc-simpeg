@@ -399,7 +399,7 @@ function getListPublikasiJurnal(dataQuery,callback){
     txt += " JOIN prodi p ON p.ID = uu.id_prod "
     txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pub_id = pj.id) as authors "
     txt += " FROM publikasi pj"
-    txt += " JOIN jenis_publikasi jp ON jp.id = pj.jenis_publikasi_id "
+    txt += " JOIN jenis_publikasi jp ON jp.kode = pj.jenis_publikasi_id "
     txt += " JOIN data_diri d ON d.NIY = pj.NIY "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
@@ -969,7 +969,7 @@ function getListLuaranJurnal(dataQuery,callback){
     txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pengabdian_jurnal_id = pj.id ) as authors "
     txt += " , (SELECT GROUP_CONCAT(DISTINCT CONCAT(ff.file_path) SEPARATOR '#') FROM pengabdian_luaran_files ff WHERE ff.parent_id = pj.id)AS docs "
     txt += " FROM pengabdian_jurnal pj"
-    txt += " JOIN jenis_publikasi jp ON jp.id = pj.jenis_publikasi_id WHERE 1 "
+    txt += " JOIN jenis_publikasi jp ON jp.kode = pj.jenis_publikasi_id WHERE 1 "
     let params = []
     if(dataQuery.tahun){
         txt += " AND tanggal_terbit LIKE ? "
