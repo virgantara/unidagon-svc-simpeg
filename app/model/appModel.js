@@ -393,11 +393,9 @@ function getListPublikasiJurnal(dataQuery,callback){
     let params = [dataQuery.sd, dataQuery.ed]
 
     let txt = "SELECT pj.*, "
-    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(dd.nama,' - ',dd.NIDN) "
-    txt += " ORDER BY paa.id SEPARATOR '#') FROM publikasi_author paa "
-    txt += " JOIN user uu ON uu.NIY = paa.NIY "
-    txt += " JOIN prodi p ON p.ID = uu.id_prod "
-    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY WHERE paa.pub_id = pj.id) as authors "
+    txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(paa.author_nama) "
+    txt += " ORDER BY paa.id SEPARATOR '; ') FROM publikasi_author paa "
+    txt += " WHERE paa.pub_id = pj.id) as authors "
     txt += " FROM publikasi pj"
     txt += " JOIN jenis_publikasi jp ON jp.kode = pj.jenis_publikasi_id "
     txt += " JOIN data_diri d ON d.NIY = pj.NIY "
