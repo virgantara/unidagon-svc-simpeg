@@ -631,7 +631,7 @@ function getListDataNIDN(dataQuery,callback){
         txt += " AND length(d.NIDN) <> 10 "
     }
 
-    
+    txt += " ORDER BY d.nama ASC"
 
     sql.query(txt,params,function(err, res){
         if(err)
