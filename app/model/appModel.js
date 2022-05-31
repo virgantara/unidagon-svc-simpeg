@@ -1249,7 +1249,7 @@ function getProfilDosen(data,callback){
     var params = []
 
     var txt = "select d.NIY, d.NIDN, d.gelar_depan, d.gelar_belakang, d.nama, d.gender, u.email, d.tempat_lahir, "
-    txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, "
+    txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, j.kode as kode_jabfung, "
     txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
     txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
     txt += " d.permalink, d.expertise, d.nik as ktp, u.sister_id, u.uuid, (SELECT GROUP_CONCAT(item_name) FROM auth_assignment WHERE u.id = user_id) as roles from data_diri d "
