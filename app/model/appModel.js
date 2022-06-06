@@ -1247,7 +1247,7 @@ function getRiwayatPendidikan(data,callback){
 
 function getProfilDosen(data,callback){
     var params = []
-
+    console.log(data)
     var txt = "select d.NIY, d.NIDN, d.gelar_depan, d.gelar_belakang, d.nama, d.gender, u.email, d.tempat_lahir, "
     txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, j.kode as kode_jabfung, "
     txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
@@ -1268,6 +1268,11 @@ function getProfilDosen(data,callback){
         params.push(data.permalink)
     }
 
+    if(data.jenjang_kode){
+        txt += " AND d.jenjang_kode = ? "
+        params.push(data.jenjang_kode)
+    }
+
     if(data.NIY){
         txt += " AND d.NIY = ? "
         params.push(data.NIY)
@@ -1283,7 +1288,7 @@ function getProfilDosen(data,callback){
         params.push(data.telegram_username)
     }
 
-    sql.query(txt,[params],function(err, res){
+    sql.query(txt,params,function(err, res){
         if(err){
             console.log(err);
             callback(err,null);
