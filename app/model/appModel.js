@@ -1266,7 +1266,7 @@ function getProfilDosen(data,callback){
     if(data.permalink){
         txt += " AND d.permalink = ? "
         params.push(data.permalink)
-    }
+    } 
 
     if(data.jenjang_kode){
         txt += " AND d.jenjang_kode = ? "
