@@ -586,7 +586,7 @@ function getListDataNIDN(dataQuery,callback){
     let txt = "select d.ID as dosenid, u.ID as userid, u.NIY, d.nama, d.NIDN, d.gelar_depan, d.gelar_belakang, p.nama as nama_prodi, p.kode_prod as kode_prodi, u.id_prod as id_prodi "
     txt += " , d.nik, d.tanggal_lahir, ja.nama as jabfung, pa.golongan as gol, pa.nama as namagol, u.email, bi.nama as bidang_ilmu, "
     txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
-    txt += " d.permalink, d.expertise, u.status as status_aktif "
+    txt += " d.permalink, d.expertise, u.status as status_aktif, d.no_sertifikat_pendidik "
     txt += " from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
@@ -618,6 +618,10 @@ function getListDataNIDN(dataQuery,callback){
         params.push(dataQuery.jabfung)
     }
 
+    if(dataQuery.is_berjabfung){
+        txt += " AND ja.kode <> 'TT' "   
+    }
+
     if(dataQuery.jenjang){
         txt += " AND d.jenjang_kode = ? "
         params.push(dataQuery.jenjang)
@@ -634,8 +638,10 @@ function getListDataNIDN(dataQuery,callback){
     txt += " ORDER BY d.nama ASC"
 
     sql.query(txt,params,function(err, res){
-        if(err)
+        if(err){
+            console.log(err)
             callback(err,null)
+        }
         else
             callback(null, res)
     })
@@ -1230,7 +1236,7 @@ function countDosen(dataQuery, callback){
 
 function getRiwayatPendidikan(data,callback){
     var params = [data.NIY]
-    var txt = "select ID, NIY, tahun_lulus, jenjang, perguruan_tinggi, jurusan FROM pendidikan"
+    var txt = "select * FROM pendidikan"
     txt += " WHERE NIY = ?; "
 
     sql.query(txt,[params],function(err, res){
