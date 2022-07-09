@@ -16,6 +16,31 @@ var Pegawai = function(task){
     
 };
 
+function getRekapBkd(dataQuery, callback){
+    
+    if(dataQuery.tahun && dataQuery.user_id){
+        let params = [dataQuery.tahun, dataQuery.user_id]
+        let txt = "SELECT * FROM bkd_rekap "
+        txt += " WHERE tahun_id = ? AND user_id = ? "    
+
+        sql.query(txt,params,function(err, res){
+            if(err){
+                console.log(err)
+                callback(err,null)
+            }
+
+            else{
+                callback(null, res)
+            }
+        })
+    }
+
+    else{
+        callback(null,[])
+    }
+    
+}
+
 function insertKehadiran(dataPost, callback){
     if(dataPost.lokasi && dataPost.rfid){
         let p = local_getDataByRFID(dataPost.rfid)
@@ -1258,7 +1283,7 @@ function getProfilDosen(data,callback){
     txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, j.kode as kode_jabfung, "
     txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
     txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
-    txt += " d.permalink, d.expertise, d.nik as ktp, u.sister_id, u.uuid, (SELECT GROUP_CONCAT(item_name) FROM auth_assignment WHERE u.id = user_id) as roles from data_diri d "
+    txt += " d.permalink, d.expertise, d.nik as ktp, u.sister_id, u.uuid, d.kode_feeder, d.id_reg_ptk, (SELECT GROUP_CONCAT(item_name) FROM auth_assignment WHERE u.id = user_id) as roles from data_diri d "
     txt += " JOIN m_pangkat p on p.id = d.pangkat"
     txt += " JOIN m_jabatan_akademik j on j.id = d.jabatan_fungsional"
     txt += " JOIN user u ON u.NIY = d.NIY "
