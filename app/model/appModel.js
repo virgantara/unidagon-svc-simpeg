@@ -26,6 +26,11 @@ function getRekapEwmp(dataQuery, callback){
     txt += " JOIN unit_kerja uk  ON j.unker_id = uk.id "
     txt += " WHERE 1 "
     
+    if(dataQuery.NIY){
+        txt += "  AND e.NIY = ? "
+        params.push(dataQuery.NIY)
+    }
+
     if(dataQuery.kode_prodi){
         txt += "  AND uk.kode_prodi = ? "
         params.push(dataQuery.kode_prodi)
