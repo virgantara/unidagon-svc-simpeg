@@ -4,6 +4,17 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getRekapEwmp = function(req, res) {
+  Simpeg.getRekapEwmp(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.insertKehadiran = function(req, res) {
   Simpeg.insertKehadiran(
     req.body,

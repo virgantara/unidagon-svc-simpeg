@@ -16,6 +16,40 @@ var Pegawai = function(task){
     
 };
 
+function getRekapEwmp(dataQuery, callback){
+    
+    let params = []
+    
+    let txt = "SELECT e.* FROM ewmp e "
+    txt += " JOIN user u ON u.NIY = e.NIY "
+    txt += " JOIN jabatan j ON j.NIY = u.NIY "
+    txt += " JOIN unit_kerja uk  ON j.unker_id = uk.id "
+    txt += " WHERE 1 "
+    
+    if(dataQuery.kode_prodi){
+        txt += "  AND uk.kode_prodi = ? "
+        params.push(dataQuery.kode_prodi)
+    }
+
+    if(dataQuery.tahun_skp){
+        txt += "  AND e.tahun_akademik like ? "
+        params.push(dataQuery.tahun_skp+"%")
+    }
+    
+    sql.query(txt,params,function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        else{
+            callback(null, res)
+        }
+    })
+    
+    
+}
+
 function getRekapBkd(dataQuery, callback){
     
     if(dataQuery.tahun && dataQuery.user_id){
@@ -2216,4 +2250,5 @@ Pegawai.getListOrasiIlmiah = getListOrasiIlmiah
 Pegawai.getListVisitingScientist = getListVisitingScientist
 Pegawai.getDataByRFID = getDataByRFID
 Pegawai.insertKehadiran = insertKehadiran
+Pegawai.getRekapEwmp = getRekapEwmp
 module.exports= Pegawai;
