@@ -667,6 +667,11 @@ function getListDataNIDN(dataQuery,callback){
         params.push(dataQuery.status_dosen)
     }
 
+    if(dataQuery.nidn){
+        txt += " AND d.NIDN = ? "
+        params.push(dataQuery.nidn)
+    }
+
     if(dataQuery.prodi_id){
         txt += " AND u.id_prod = ? "
         params.push(dataQuery.prodi_id)
