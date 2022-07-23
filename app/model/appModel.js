@@ -16,57 +16,6 @@ var Pegawai = function(task){
     
 };
 
-// function getListMahasiswaTerlibatPengabdian(dataQuery,callback){
-//     let params = []
-
-//     let txt = "SELECT p.judul_penelitian_pengabdian as judul, tahun_kegiatan, tempat_kegiatan, sister_id, dana_dikti, dana_pt "
-//     txt += ", dana_institusi_lain "
-//     txt += " from pengabdian p "
-//     txt += " JOIN simak_skripsi skr ON skr.nim = m.nim_mhs "
-//     txt += " JOIN simak_masterdosen d ON d.id = m.nip_co_promotor1 "
-//     // txt += " JOIN simak_masterdosen dd ON dd.id = m.nip_co_promotor2 "
-//     txt += " WHERE skr.simpeg_penelitian_sister_id IS NOT NULL AND m.status_hapus = 0 AND m.status_aktivitas IN ('A','C','N','G','L') "
-
-//     if(dataQuery.kode_prodi){
-//         txt += " AND m.kode_prodi = ? "
-//         params.push(dataQuery.kode_prodi)
-//     }
-
-//     if(dataQuery.simpeg_penelitian_sister_id){
-//         txt += " AND skr.simpeg_penelitian_sister_id = ? "
-//         params.push(dataQuery.simpeg_penelitian_sister_id)
-//     }
-    
-//     if(dataQuery.sd && dataQuery.ed){
-//         txt += " AND m.tgl_sk_pembimbingan_tesis BETWEEN ? AND ? "
-//         params.push(dataQuery.sd)
-//         params.push(dataQuery.ed)
-//     }
-
-//     if(dataQuery.nidn){
-//         txt += " AND (m.nip_co_promotor1 IN (SELECT id FROM simak_masterdosen WHERE nidn_asli = ?) ) "
-//         params.push(dataQuery.nidn)
-//         params.push(dataQuery.nidn)   
-//     }
-//     // if(dataQuery.nidn){
-//     //     txt += " AND (m.nip_co_promotor1 IN (SELECT id FROM simak_masterdosen WHERE nidn_asli = ?) OR m.nip_co_promotor2 IN (SELECT id FROM simak_masterdosen WHERE nidn_asli = ?)) "
-//     //     params.push(dataQuery.nidn)
-//     //     params.push(dataQuery.nidn)   
-//     // }
-
-//     txt += " ORDER BY m.nama_mahasiswa ASC "
-
-//     sql.query(txt,params,function(err, res){
-//         if(err){
-//             console.log(err)
-//             callback(err,null)
-//         }
-//         else{
-//             callback(null, res)
-//         }
-//     })
-// }
-
 function getRekapEwmp(dataQuery, callback){
     
     let params = []
@@ -611,27 +560,6 @@ function listSimpegPengabdian(dataQuery, callback){
                         
                     }
                 })
-                // let txt = "SELECT dd.nama, dd.NIDN, ang.id_sdm, ang.nim, ang.peran, ang.jenis, ang.NIY, p.nama as namaprodi " 
-                // txt += " FROM pengabdian_anggota ang "
-                // txt += " JOIN user uu ON uu.NIY = ang.NIY "
-                // txt += " JOIN data_diri dd ON dd.NIY = uu.NIY "
-                // txt += " JOIN prodi p ON p.ID = uu.id_prod "
-                // txt += " WHERE ang.pengabdian_id = ? "
-                // sql.query(txt,[obj.ID],function(err, res){
-                //     if(err){
-                //         reject(err)
-                //     }
-
-                //     else{
-                //         obj.members = res
-                //         // let results = {
-                //         //     item : obj,
-                //         //     member: res
-                //         // }
-                //         resolve(obj)
-                        
-                //     }
-                // })
             })
         })
 
