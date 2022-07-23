@@ -16,6 +16,57 @@ var Pegawai = function(task){
     
 };
 
+// function getListMahasiswaTerlibatPengabdian(dataQuery,callback){
+//     let params = []
+
+//     let txt = "SELECT p.judul_penelitian_pengabdian as judul, tahun_kegiatan, tempat_kegiatan, sister_id, dana_dikti, dana_pt "
+//     txt += ", dana_institusi_lain "
+//     txt += " from pengabdian p "
+//     txt += " JOIN simak_skripsi skr ON skr.nim = m.nim_mhs "
+//     txt += " JOIN simak_masterdosen d ON d.id = m.nip_co_promotor1 "
+//     // txt += " JOIN simak_masterdosen dd ON dd.id = m.nip_co_promotor2 "
+//     txt += " WHERE skr.simpeg_penelitian_sister_id IS NOT NULL AND m.status_hapus = 0 AND m.status_aktivitas IN ('A','C','N','G','L') "
+
+//     if(dataQuery.kode_prodi){
+//         txt += " AND m.kode_prodi = ? "
+//         params.push(dataQuery.kode_prodi)
+//     }
+
+//     if(dataQuery.simpeg_penelitian_sister_id){
+//         txt += " AND skr.simpeg_penelitian_sister_id = ? "
+//         params.push(dataQuery.simpeg_penelitian_sister_id)
+//     }
+    
+//     if(dataQuery.sd && dataQuery.ed){
+//         txt += " AND m.tgl_sk_pembimbingan_tesis BETWEEN ? AND ? "
+//         params.push(dataQuery.sd)
+//         params.push(dataQuery.ed)
+//     }
+
+//     if(dataQuery.nidn){
+//         txt += " AND (m.nip_co_promotor1 IN (SELECT id FROM simak_masterdosen WHERE nidn_asli = ?) ) "
+//         params.push(dataQuery.nidn)
+//         params.push(dataQuery.nidn)   
+//     }
+//     // if(dataQuery.nidn){
+//     //     txt += " AND (m.nip_co_promotor1 IN (SELECT id FROM simak_masterdosen WHERE nidn_asli = ?) OR m.nip_co_promotor2 IN (SELECT id FROM simak_masterdosen WHERE nidn_asli = ?)) "
+//     //     params.push(dataQuery.nidn)
+//     //     params.push(dataQuery.nidn)   
+//     // }
+
+//     txt += " ORDER BY m.nama_mahasiswa ASC "
+
+//     sql.query(txt,params,function(err, res){
+//         if(err){
+//             console.log(err)
+//             callback(err,null)
+//         }
+//         else{
+//             callback(null, res)
+//         }
+//     })
+// }
+
 function getRekapEwmp(dataQuery, callback){
     
     let params = []
@@ -490,31 +541,18 @@ function getListPublikasiJurnal(dataQuery,callback){
     })
 }
 
-function listSimpegPengabdian(dataQuery, callback){
-    let params = []
-
-    let txt = "SELECT t.*, d.nama as namadosen, p.nama as namaprodi FROM pengabdian t "
-    txt += " JOIN data_diri d ON d.NIY = t.NIY "
-    txt += " JOIN user u ON u.NIY = d.NIY "
-    txt += "JOIN prodi p ON p.ID = u.id_prod WHERE 1 "
-    if(dataQuery.prodi){
-        txt += " AND p.kode_prod = ? " 
-        params.push(dataQuery.prodi)
-    }
-
-    if(dataQuery.tahun){
-        txt += " AND tahun_dilaksanakan = ?"
-        params.push(dataQuery.tahun)
-    }
-    
-    if(dataQuery.sumber_dana){
-        txt += " AND jenis_sumber_dana = ? "
-        params.push(dataQuery.sumber_dana)    
-    }
-    
+function listSimpegPengabdianAnggota(dataQuery, callback){
+    let params = [dataQuery.pengabdian_id]
+    let txt = "SELECT dd.nama, dd.NIDN, ang.id_sdm, ang.nim " 
+    txt += " FROM pengabdian_anggota ang "
+    txt += " JOIN user uu ON uu.NIY = ang.NIY "
+    txt += " JOIN data_diri dd ON dd.NIY = uu.NIY "
+    txt += " WHERE ang.pengabdian_id = ? "
     sql.query(txt,params,function(err, res){
         if(err){
+            console.log(err)
             callback(err,null)
+
         }
 
         else{
@@ -524,13 +562,91 @@ function listSimpegPengabdian(dataQuery, callback){
     })
 }
 
+function listSimpegPengabdian(dataQuery, callback){
+    local_listSimpegPengabdian(dataQuery, function(err, items){
+        // let results = []
+        let promises = items.map(function(obj){
+            return new Promise((resolve, reject)=>{
+                let txt = "SELECT dd.nama, dd.NIDN, ang.id_sdm, ang.nim, ang.peran, ang.jenis, ang.NIY " 
+                txt += " FROM pengabdian_anggota ang "
+                txt += " JOIN user uu ON uu.NIY = ang.NIY "
+                txt += " JOIN data_diri dd ON dd.NIY = uu.NIY "
+                txt += " WHERE ang.pengabdian_id = ? "
+                sql.query(txt,[obj.ID],function(err, res){
+                    if(err){
+                        reject(err)
+                    }
+
+                    else{
+                        obj.members = res
+                        // let results = {
+                        //     item : obj,
+                        //     member: res
+                        // }
+                        resolve(obj)
+                        
+                    }
+                })
+            })
+        })
+
+        Promise.all(promises)
+        .then(hasil=>{
+            callback(null, hasil)
+        })  
+        .catch(err=>{
+            console.log(err)
+            callback(err, null)
+        })
+    })
+}
+
+function local_listSimpegPengabdian(dataQuery, callback){
+    let params = []
+
+    let txt = "SELECT t.ID, t.tempat_kegiatan, t.judul_penelitian_pengabdian, t.tahun_dilaksanakan, t.tahun_kegiatan,t.dana_dikti, t.dana_pt, t.dana_institusi_lain,t.tgl_sk_tugas, t.no_sk_tugas, t.nama_mitra, t.tautan_kuesioner_mitra "
+    txt += " FROM pengabdian t "    
+    txt += " WHERE "+dataQuery.prodi+" IN (SELECT p.kode_prod FROM pengabdian_anggota ang JOIN data_diri d ON d.NIY = ang.NIY JOIN user u ON u.NIY = ang.NIY JOIN prodi p ON p.ID = u.id_prod WHERE ang.pengabdian_id = t.ID) "
+    // txt += " JOIN data_diri d ON d.NIY = t.NIY "
+    // txt += " JOIN user u ON u.NIY = d.NIY "
+    // txt += "JOIN prodi p ON p.ID = u.id_prod WHERE 1 "
+    // if(dataQuery.prodi){
+    //     txt += " AND p.kode_prod = ? " 
+    //     params.push(dataQuery.prodi)
+    // }
+
+    if(dataQuery.tahun){
+        txt += " AND tahun_kegiatan = ?"
+        params.push(dataQuery.tahun)
+    }
+    
+    if(dataQuery.sumber_dana){
+        txt += " AND jenis_sumber_dana = ? "
+        params.push(dataQuery.sumber_dana)    
+    }
+
+    // txt += " GROUP BY t.ID, t.tempat_kegiatan, t.judul_penelitian_pengabdian"
+    
+    sql.query(txt,params,function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        else{
+            callback(null,JSON.parse(JSON.stringify(res)))
+            
+        }
+    })
+}
+
 function countSimpegPengabdian(dataQuery, callback){
     let params = []
 
     let txt = "SELECT  "
-    txt += "(SELECT COUNT(*) as total FROM pengabdian t JOIN data_diri d ON d.NIY = t.NIY JOIN user u ON u.NIY = t.NIY JOIN prodi p ON p.ID = u.id_prod WHERE p.kode_prod = "+dataQuery.prodi+" AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'mandiri' ) as mandiri, "
-    txt += "(SELECT COUNT(*) as total FROM pengabdian t JOIN data_diri d ON d.NIY = t.NIY JOIN user u ON u.NIY = t.NIY JOIN prodi p ON p.ID = u.id_prod WHERE p.kode_prod = "+dataQuery.prodi+" AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'dalam' ) as dn, "
-    txt += "(SELECT COUNT(*) as total FROM pengabdian t JOIN data_diri d ON d.NIY = t.NIY JOIN user u ON u.NIY = t.NIY JOIN prodi p ON p.ID = u.id_prod WHERE p.kode_prod = "+dataQuery.prodi+" AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'luar' ) as ln "
+    txt += "(SELECT COUNT(*) as total FROM pengabdian t WHERE "+dataQuery.prodi+" IN (SELECT p.kode_prod FROM pengabdian_anggota ang JOIN data_diri d ON d.NIY = ang.NIY JOIN user u ON u.NIY = ang.NIY JOIN prodi p ON p.ID = u.id_prod WHERE ang.pengabdian_id = t.ID) AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'mandiri') as mandiri, "
+    txt += "(SELECT COUNT(*) as total FROM pengabdian t WHERE "+dataQuery.prodi+" IN (SELECT p.kode_prod FROM pengabdian_anggota ang JOIN data_diri d ON d.NIY = ang.NIY JOIN user u ON u.NIY = ang.NIY JOIN prodi p ON p.ID = u.id_prod WHERE ang.pengabdian_id = t.ID) AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'dalam') as dn, "
+    txt += "(SELECT COUNT(*) as total FROM pengabdian t WHERE "+dataQuery.prodi+" IN (SELECT p.kode_prod FROM pengabdian_anggota ang JOIN data_diri d ON d.NIY = ang.NIY JOIN user u ON u.NIY = ang.NIY JOIN prodi p ON p.ID = u.id_prod WHERE ang.pengabdian_id = t.ID) AND tahun_dilaksanakan = "+dataQuery.tahun+" AND jenis_sumber_dana = 'luar' ) as ln "
     sql.query(txt,params,function(err, res){
         if(err){
             callback(err,null)
