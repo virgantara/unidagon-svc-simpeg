@@ -541,13 +541,34 @@ function getListPublikasiJurnal(dataQuery,callback){
     })
 }
 
-function listSimpegPengabdianAnggota(dataQuery, callback){
-    let params = [dataQuery.pengabdian_id]
-    let txt = "SELECT dd.nama, dd.NIDN, ang.id_sdm, ang.nim " 
+function listSimpegPengabdianAnggotaDosen(pengabdian_id, callback){
+    let params = [pengabdian_id]
+    let txt = "SELECT dd.nama, dd.NIDN, ang.id_sdm, ang.nim, ang.peran, ang.jenis, ang.NIY, p.nama as namaprodi  " 
     txt += " FROM pengabdian_anggota ang "
     txt += " JOIN user uu ON uu.NIY = ang.NIY "
     txt += " JOIN data_diri dd ON dd.NIY = uu.NIY "
+    txt += " JOIN prodi p ON p.ID = uu.id_prod "
     txt += " WHERE ang.pengabdian_id = ? "
+    sql.query(txt,params,function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+
+        }
+
+        else{
+            callback(null, res)
+            
+        }
+    })
+}
+
+
+function listSimpegPengabdianAnggotaMahasiswa(pengabdian_id, callback){
+    let params = [pengabdian_id]
+    let txt = "SELECT ang.nama, ang.id_sdm, ang.nim, ang.peran, ang.jenis  " 
+    txt += " FROM pengabdian_anggota ang "
+    txt += " WHERE ang.pengabdian_id = ? AND ang.jenis = 'Mahasiswa'"
     sql.query(txt,params,function(err, res){
         if(err){
             console.log(err)
@@ -567,26 +588,50 @@ function listSimpegPengabdian(dataQuery, callback){
         // let results = []
         let promises = items.map(function(obj){
             return new Promise((resolve, reject)=>{
-                let txt = "SELECT dd.nama, dd.NIDN, ang.id_sdm, ang.nim, ang.peran, ang.jenis, ang.NIY " 
-                txt += " FROM pengabdian_anggota ang "
-                txt += " JOIN user uu ON uu.NIY = ang.NIY "
-                txt += " JOIN data_diri dd ON dd.NIY = uu.NIY "
-                txt += " WHERE ang.pengabdian_id = ? "
-                sql.query(txt,[obj.ID],function(err, res){
-                    if(err){
+                listSimpegPengabdianAnggotaDosen(obj.ID, function(err, res){
+                    if(err){console.log(err)
                         reject(err)
                     }
 
                     else{
-                        obj.members = res
-                        // let results = {
-                        //     item : obj,
-                        //     member: res
-                        // }
-                        resolve(obj)
+                        
+                        listSimpegPengabdianAnggotaMahasiswa(obj.ID, function(err, resMhs){
+                            if(err){
+                                console.log(err)
+                                reject(err)
+                            }
+
+                            else{
+                                obj.members = res
+                                obj.mahasiswa = resMhs
+                                resolve(obj)
+                            }
+                        })
+                        
                         
                     }
                 })
+                // let txt = "SELECT dd.nama, dd.NIDN, ang.id_sdm, ang.nim, ang.peran, ang.jenis, ang.NIY, p.nama as namaprodi " 
+                // txt += " FROM pengabdian_anggota ang "
+                // txt += " JOIN user uu ON uu.NIY = ang.NIY "
+                // txt += " JOIN data_diri dd ON dd.NIY = uu.NIY "
+                // txt += " JOIN prodi p ON p.ID = uu.id_prod "
+                // txt += " WHERE ang.pengabdian_id = ? "
+                // sql.query(txt,[obj.ID],function(err, res){
+                //     if(err){
+                //         reject(err)
+                //     }
+
+                //     else{
+                //         obj.members = res
+                //         // let results = {
+                //         //     item : obj,
+                //         //     member: res
+                //         // }
+                //         resolve(obj)
+                        
+                //     }
+                // })
             })
         })
 
