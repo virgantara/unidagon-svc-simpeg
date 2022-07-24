@@ -4,6 +4,17 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.listSimpegAnggotaProfesi = function(req, res) {
+  Simpeg.listSimpegAnggotaProfesi(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.getRekapEwmp = function(req, res) {
   Simpeg.getRekapEwmp(
     req.query,

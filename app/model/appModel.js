@@ -16,6 +16,100 @@ var Pegawai = function(task){
     
 };
 
+function local_listSimpegAnggotaProfesi(nidn, callback){
+    
+    let txt = "SELECT t.ID,t.organisasi, t.tanggal_mulai_keanggotaan, t.nama_kategori_kegiatan, "
+    txt += " t.jabatan, t.instansi_profesi, t.nomor_anggota, t.sister_id "
+    txt += " FROM organisasi t "    
+    txt += " JOIN data_diri d ON d.NIY = t.NIY "
+    txt += " WHERE d.NIDN = ? "
+    
+    sql.query(txt,[nidn],function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        else{
+            callback(null,JSON.parse(JSON.stringify(res)))
+            
+        }
+    })
+}
+
+function local_listSimpegSertifikasiProfesi(nidn, jenis_sertifikasi){
+    return new Promise((resolve, reject)=>{
+        let params = [nidn, jenis_sertifikasi]
+        let txt = "SELECT t.jenis_sertifikasi, t.bidang_studi, t.nomor_registrasi, t.sk_sertifikasi, t.tingkat "
+        txt += " FROM sertifikasi t "    
+        txt += " JOIN data_diri d ON d.NIY = t.NIY "
+        txt += " WHERE d.NIDN = ?  "    
+        txt += "AND t.jenis_sertifikasi = ? "    
+        
+        sql.query(txt,params,function(err, res){
+            if(err){
+                console.log(err)
+                reject(err)
+            }
+
+            else{
+                resolve(res)
+                
+            }
+        })
+    })
+    
+}
+
+function local_listSimpegAnggotaProfesiDokumen(parent_sister_id){
+    return new Promise((resolve, reject)=>{
+        let txt = "SELECT t.nama_dokumen, t.nama_jenis_dokumen, t.tautan "
+        txt += " FROM sister_files t "    
+        txt += " WHERE t.parent_sister_id = ? "
+        
+        sql.query(txt,[parent_sister_id],function(err, res){
+            if(err){
+                console.log(err)
+                reject(err)
+            }
+
+            else{
+                resolve(res)
+                
+            }
+        })
+    })
+    
+}
+
+function listSimpegAnggotaProfesi(dataQuery, callback){
+    local_listSimpegAnggotaProfesi(dataQuery.nidn, function(err, items){
+        
+        let promises = items.map(function(obj){
+            return new Promise((resolve, reject)=>{
+
+                let p = local_listSimpegAnggotaProfesiDokumen(obj.sister_id)
+                p.then(res=>{
+                    obj.dokumen = res
+                    resolve(obj)
+                })
+                .catch(e=>{
+                    reject(e)
+                })
+            })
+        })
+
+        Promise.all(promises)
+        .then(hasil=>{
+            callback(null, hasil)
+        })  
+        .catch(err=>{
+            console.log(err)
+            callback(err, null)
+        })
+    })
+}
+
 function getRekapEwmp(dataQuery, callback){
     
     let params = []
@@ -800,8 +894,39 @@ function getListDataNIDN(dataQuery,callback){
             console.log(err)
             callback(err,null)
         }
-        else
-            callback(null, res)
+        else{
+            
+            let hsl = JSON.parse(JSON.stringify(res))
+            let promises = hsl.map(function(obj){
+                return new Promise((resolve, reject)=>{
+                    let p = local_listSimpegSertifikasiProfesi(obj.NIDN, 'Sertifikasi Profesi')    
+                    p.then(r=>{
+                        let item = new Object
+                        item = obj
+                        item.sertifikasi = r 
+                        resolve(item)
+                    }).catch(e=>{
+                        reject(e)
+                    })    
+                })
+                
+            })
+
+            Promise.all(promises)
+            .then(hasil=>{
+                // console.log(hasil)
+                // let obj = new Object
+                // obj = hsl
+                // obj.sertifikasi = hasil
+                // hsl.sertifikasi = hasil
+                callback(null,hasil)
+            })
+            .catch(err=>{
+
+                callback(err,null)
+            })
+            // callback(null, res)
+        }
     })
 }
 
@@ -2350,4 +2475,5 @@ Pegawai.getListVisitingScientist = getListVisitingScientist
 Pegawai.getDataByRFID = getDataByRFID
 Pegawai.insertKehadiran = insertKehadiran
 Pegawai.getRekapEwmp = getRekapEwmp
+Pegawai.listSimpegAnggotaProfesi = listSimpegAnggotaProfesi
 module.exports= Pegawai;

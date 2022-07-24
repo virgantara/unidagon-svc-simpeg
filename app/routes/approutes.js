@@ -4,6 +4,9 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/simpeg/dosen/anggotaprofesi/list')
+    .get(todoList.listSimpegAnggotaProfesi);
+
   app.route('/simpeg/ewmp/rekap/get')
     .get(todoList.getRekapEwmp);
 
