@@ -517,7 +517,7 @@ function listDosenJabfung(dataQuery, callback){
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " JOIN m_pangkat pa on pa.id = d.pangkat "
     txt += " JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id "
-    txt += " WHERE u.status = 'aktif'  "
+    txt += " WHERE (u.status IN ('aktif','izinbelajar','tugasbelajar'))  "
 
     if(dataQuery.jenjang){
         txt += " AND d.jenjang_kode = ? "
@@ -786,18 +786,18 @@ function countSimpegPenelitian(dataQuery, callback){
 
 function countRekapIhsan(dataQuery, callback){
     let txt = "SELECT "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND u.status = 'aktif' AND d.status_ihsan = 'FT') as dt_ft, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND u.status = 'aktif' AND d.status_ihsan = 'Kader') as dt_kader, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND u.status = 'aktif' AND d.status_ihsan = 'S1-Kader') as dt_s1_kader, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND u.status = 'aktif' AND d.status_ihsan = 'Non-FT') as dt_non_ft, "    
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'FT') as dtt_ft, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'Kader') as dtt_kader, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'S1-Kader') as dtt_s1_kader, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND u.status = 'aktif' AND d.status_ihsan = 'Non-FT') as dtt_non_ft, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND u.status = 'aktif' AND LENGTH(NIDN) = 10) as dt_sudah_nidn, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND u.status = 'aktif' AND (LENGTH(NIDN) <> 10 OR NIDN IS NULL OR NIDN = '')) as dt_belum_nidn, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND u.status = 'aktif' AND LENGTH(no_sertifikat_pendidik) > 6) as dt_sudah_serdos, "
-    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND u.status = 'aktif' AND (no_sertifikat_pendidik IS NULL OR no_sertifikat_pendidik = '')) as dt_belum_serdos "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND d.status_ihsan = 'FT') as dt_ft, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND d.status_ihsan = 'Kader') as dt_kader, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND d.status_ihsan = 'S1-Kader') as dt_s1_kader, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND d.status_ihsan = 'Non-FT') as dt_non_ft, "    
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND d.status_ihsan = 'FT') as dtt_ft, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND d.status_ihsan = 'Kader') as dtt_kader, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND d.status_ihsan = 'S1-Kader') as dtt_s1_kader, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN prodi p ON p.ID = u.id_prod where d.status_dosen = 2 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND d.status_ihsan = 'Non-FT') as dtt_non_ft, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND LENGTH(NIDN) = 10) as dt_sudah_nidn, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND (LENGTH(NIDN) <> 10 OR NIDN IS NULL OR NIDN = '')) as dt_belum_nidn, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND LENGTH(no_sertifikat_pendidik) > 6) as dt_sudah_serdos, "
+    txt += " (SELECT count(*)  FROM data_diri d JOIN user u ON u.NIY = d.NIY where d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND (no_sertifikat_pendidik IS NULL OR no_sertifikat_pendidik = '')) as dt_belum_serdos "
     sql.query(txt,[],function(err, res){
         if(err)
             callback(err,null)
@@ -808,16 +808,16 @@ function countRekapIhsan(dataQuery, callback){
 
 function countJabfung(dataQuery, callback){
     let txt = "SELECT "
-    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 1 AND u.status = 'aktif') as gb_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 2 AND u.status = 'aktif') as gb_dtt, "
-    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 1 AND u.status = 'aktif') as lk_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 2 AND u.status = 'aktif') as lk_dtt, "
-    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 1 AND u.status = 'aktif') as l_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 2 AND u.status = 'aktif') as l_dtt, "
-    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 1 AND u.status = 'aktif') as aa_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 2 AND u.status = 'aktif') as aa_dtt, "
-    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 1 AND u.status = 'aktif') as tp_dt, "
-    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 2 AND u.status = 'aktif') as tp_dtt "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as gb_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'GB' and d.status_dosen = 2 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as gb_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as lk_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'LK' and d.status_dosen = 2 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as lk_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as l_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'L' and d.status_dosen = 2 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as l_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as aa_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'AA' and d.status_dosen = 2 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as aa_dtt, "
+    txt += " (SELECT count(*) as gb_dt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as tp_dt, "
+    txt += " (SELECT count(*) as gb_dtt FROM data_diri d JOIN user u ON u.NIY = d.NIY JOIN m_jabatan_akademik jf ON d.jabatan_fungsional = jf.id where jf.kode = 'TT' and d.status_dosen = 2 AND (u.status IN ('aktif','izinbelajar','tugasbelajar'))) as tp_dtt "
     
     sql.query(txt,[],function(err, res){
         if(err)
@@ -843,7 +843,7 @@ function getListDataNIDN(dataQuery,callback){
     txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id "
     txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
     txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
-    txt += " WHERE u.status = 'aktif' "
+    txt += " WHERE (u.status IN ('aktif','izinbelajar','tugasbelajar')) "
 
     if(dataQuery.status_dosen){
         txt += " AND d.status_dosen = ? "
@@ -935,7 +935,7 @@ function getCountDataNIDN(dataQuery,callback){
     let txt = "select p.id, p.kode_prod, p.nama, count(*) as total from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
-    txt += " WHERE u.status = 'aktif' "
+    txt += " WHERE (u.status IN ('aktif','izinbelajar','tugasbelajar')) "
 
     if(dataQuery.status_dosen){
         txt += " AND d.status_dosen = ? "
@@ -967,7 +967,7 @@ function getCountDataSerdos(dataQuery,callback){
     let txt = "select p.id, p.nama, count(*) as total from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
-    txt += " WHERE d.status_dosen = 1 AND u.status = 'aktif' "
+    txt += " WHERE d.status_dosen = 1 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) "
     if(dataQuery.status == '1'){
         txt += " AND length(d.no_sertifikat_pendidik) > 6 "
     }
@@ -995,7 +995,7 @@ function getListDataSerdos(dataQuery,callback){
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " LEFT JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional "
     txt += " LEFT JOIN m_pangkat pa on pa.id = d.pangkat "
-    txt += " WHERE u.status = 'aktif' "
+    txt += " WHERE (u.status IN ('aktif','izinbelajar','tugasbelajar')) "
     
     if(dataQuery.status == '1'){
         txt += " AND length(d.no_sertifikat_pendidik) > 6 "
@@ -1351,7 +1351,7 @@ function getListDosenJenjangJabfung(dataQuery, callback){
     txt += " JOIN prodi p ON u.id_prod = p.ID "
     txt += " JOIN fakultas f ON f.ID = p.id_fak "
     txt += " JOIN m_jabatan_akademik ja ON ja.id = dd.jabatan_fungsional "
-    txt += " where u.status = 'aktif' AND LENGTH(dd.NIDN) > 9 "
+    txt += " where (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND LENGTH(dd.NIDN) > 9 "
     if(dataQuery.jenjang){
         txt += " and dd.jenjang_kode = ? "
         params.push(dataQuery.jenjang)
@@ -1383,15 +1383,15 @@ function getRekapDosenJabfungDetail(dataQuery, callback){
     var params = []
 
     txt = " select dd.jenjang_kode, jp.nama_lain2, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'GB' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as gb, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'LK' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as lk, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'L' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as l, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'AA' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as aa, "
-    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE uu.status = 'aktif' AND ja.kode = 'TT' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9 ) as tt "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE u(u.status IN ('aktif','izinbelajar','tugasbelajar')) AND ja.kode = 'GB' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as gb, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE u(u.status IN ('aktif','izinbelajar','tugasbelajar')) AND ja.kode = 'LK' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as lk, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE u(u.status IN ('aktif','izinbelajar','tugasbelajar')) AND ja.kode = 'L' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as l, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE u(u.status IN ('aktif','izinbelajar','tugasbelajar')) AND ja.kode = 'AA' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9) as aa, "
+    txt += " (SELECT count(*) FROM data_diri d JOIN m_jabatan_akademik ja ON ja.id = d.jabatan_fungsional JOIN user uu ON uu.NIY = d.NIY WHERE u(u.status IN ('aktif','izinbelajar','tugasbelajar')) AND ja.kode = 'TT' and d.jenjang_kode = dd.jenjang_kode AND d.status_dosen = dd.status_dosen AND LENGTH(d.NIDN) > 9 ) as tt "
     txt += " from data_diri dd "
     txt += " JOIN m_jenjang_pendidikan jp ON jp.kode = dd.jenjang_kode "
     txt += " JOIN user u ON u.NIY = dd.NIY "
-    txt += " WHERE u.status = 'aktif' AND LENGTH(dd.NIDN) > 9 "
+    txt += " WHERE (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND LENGTH(dd.NIDN) > 9 "
     if(dataQuery.status_dosen){
         txt += " AND dd.status_dosen = ? "
         params.push(dataQuery.status_dosen)
@@ -1417,7 +1417,7 @@ function getListDosenJenjangFakultas(dataQuery, callback){
     txt += " JOIN user u ON u.NIY = dd.NIY "
     txt += " JOIN prodi p ON u.id_prod = p.ID "
     txt += " JOIN fakultas f ON f.ID = p.id_fak "
-    txt += " where u.status = 'aktif' AND LENGTH(dd.NIDN) > 9 "
+    txt += " where (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND LENGTH(dd.NIDN) > 9 "
     if(dataQuery.jenjang){
         txt += " and dd.jenjang_kode = ? "
         params.push(dataQuery.jenjang)
@@ -1449,14 +1449,14 @@ function getRekapDosenPerfakultas(dataQuery, callback){
     var params = []
 
     txt = " select f.ID as fid, "
-    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S2' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND uu.status = 'aktif' AND LENGTH(ddd.NIDN) > 9 ) as S2, "
-    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S3' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND uu.status = 'aktif' AND LENGTH(ddd.NIDN) > 9) as S3, "
-    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'PROFESI' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND uu.status = 'aktif' AND LENGTH(ddd.NIDN) > 9) as PROFESI "
+    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S2' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND u(u.status IN ('aktif','izinbelajar','tugasbelajar')) AND LENGTH(ddd.NIDN) > 9 ) as S2, "
+    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'S3' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND u(u.status IN ('aktif','izinbelajar','tugasbelajar')) AND LENGTH(ddd.NIDN) > 9) as S3, "
+    txt += " (SELECT count(*) from data_diri ddd JOIN user uu ON uu.NIY = ddd.NIY JOIN prodi pp ON uu.id_prod = pp.ID JOIN fakultas ff ON ff.ID = pp.id_fak WHERE ddd.jenjang_kode = 'PROFESI' AND ff.ID = f.ID AND ddd.status_dosen = dd.status_dosen AND u(u.status IN ('aktif','izinbelajar','tugasbelajar')) AND LENGTH(ddd.NIDN) > 9) as PROFESI "
     txt += " from data_diri dd "
     txt += " JOIN user u ON u.NIY = dd.NIY "
     txt += " JOIN prodi p ON u.id_prod = p.ID "
     txt += " JOIN fakultas f ON f.ID = p.id_fak "
-    txt += " where u.status = 'aktif' AND LENGTH(dd.NIDN) > 9  "
+    txt += " where (u.status IN ('aktif','izinbelajar','tugasbelajar')) AND LENGTH(dd.NIDN) > 9  "
     if(dataQuery.status_dosen){
         txt += " and dd.status_dosen = ? "
         params.push(dataQuery.status_dosen)
@@ -2309,7 +2309,7 @@ function getListDosen(data,callback){
     txt += " LEFT JOIN bidang_ilmu bii ON bii.kode = bi.kode_id"
     txt += " LEFT JOIN bidang_kepakaran bk ON bk.id = d.kepakaran_id"
     txt += " LEFT JOIN bidang_kepakaran bkp ON bkp.kode = bk.parent"
-    txt += " WHERE d.nama <> '-' AND  u.status = 'aktif' "
+    txt += " WHERE d.nama <> '-' AND  (u.status IN ('aktif','izinbelajar','tugasbelajar')) "
 
     if(data.nama){
         txt += " AND d.nama LIKE '%"+jsStringEscape(data.nama)+"%'"
