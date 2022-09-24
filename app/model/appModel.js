@@ -1536,7 +1536,7 @@ function getRiwayatPendidikan(data,callback){
 
 function getProfilDosen(data,callback){
     var params = []
-    console.log(data)
+
     var txt = "select d.NIY, d.NIDN, d.gelar_depan, d.gelar_belakang, d.nama, d.gender, u.email, d.tempat_lahir, "
     txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, j.kode as kode_jabfung, "
     txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
@@ -2300,7 +2300,7 @@ function getListDosen(data,callback){
     txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, "
     txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
     txt += " bii.nama as bidang_ilmu_induk, d.permalink, bk.nama as kepakaran, "
-    txt += " bkp.nama as parent_kepakaran, d.expertise, d.kode_unik from data_diri d "
+    txt += " bkp.nama as parent_kepakaran, d.expertise, d.kode_unik, d.gelar_depan as gd, d.gelar_belakang  as gb from data_diri d "
     txt += " JOIN m_pangkat p on p.id = d.pangkat"
     txt += " JOIN m_jabatan_akademik j on j.id = d.jabatan_fungsional"
     txt += " JOIN user u ON u.NIY = d.NIY "
