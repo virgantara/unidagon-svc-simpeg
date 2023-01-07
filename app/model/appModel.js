@@ -548,7 +548,7 @@ function listDosenJabfung(dataQuery, callback){
 }
 
 function getListPublikasiJurnal(dataQuery,callback){
-    let params = [dataQuery.sd, dataQuery.ed]
+    let params = []
 
     let txt = "SELECT pj.*, "
     txt += " (SELECT GROUP_CONCAT(DISTINCT CONCAT(paa.author_nama) "
@@ -560,12 +560,22 @@ function getListPublikasiJurnal(dataQuery,callback){
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " WHERE 1 "
-    txt += " AND tanggal_terbit BETWEEN ? AND ? "
+    
+    if(dataQuery.sd && dataQuery.ed){
+        txt += " AND tanggal_terbit BETWEEN ? AND ? "
+        params.push(dataQuery.sd)
+        params.push(dataQuery.ed)
+    }
+
     if(dataQuery.prodi){
         txt += " AND p.kode_prod = ? "
         params.push(dataQuery.prodi)
     }
     
+    if(dataQuery.NIY){
+        txt += " AND pj.NIY = ? "
+        params.push(dataQuery.NIY)
+    }
     
     if(dataQuery.jenis_publikasi){
         txt += " AND jp.nama = ? "
@@ -575,6 +585,8 @@ function getListPublikasiJurnal(dataQuery,callback){
     if(dataQuery.sitasi){
         txt += " AND pj.jumlah_sitasi > 0 "
     }
+
+    txt += " ORDER BY pj.tanggal_terbit DESC"
 
     sql.query(txt, params, function(err, res){
         if(err)
@@ -853,6 +865,11 @@ function getListDataNIDN(dataQuery,callback){
     if(dataQuery.nidn){
         txt += " AND d.NIDN = ? "
         params.push(dataQuery.nidn)
+    }
+
+    if(dataQuery.NIY){
+        txt += " AND d.NIY = ? "
+        params.push(dataQuery.NIY)
     }
 
     if(dataQuery.prodi_id){
