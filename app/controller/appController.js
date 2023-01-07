@@ -4,6 +4,18 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getBkdDosen = function(req, res) {
+  Simpeg.getBkdDosen(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+
 exports.listSimpegAnggotaProfesi = function(req, res) {
   Simpeg.listSimpegAnggotaProfesi(
     req.query,

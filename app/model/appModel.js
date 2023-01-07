@@ -151,6 +151,31 @@ function getRekapEwmp(dataQuery, callback){
     
 }
 
+function getBkdDosen(dataQuery, callback){
+    
+    if(dataQuery.tahun && dataQuery.dosen_id){
+        let params = [dataQuery.tahun, dataQuery.dosen_id]
+        let txt = "SELECT * FROM bkd_dosen "
+        txt += " WHERE tahun_id = ? AND dosen_id = ? "    
+
+        sql.query(txt,params,function(err, res){
+            if(err){
+                console.log(err)
+                callback(err,null)
+            }
+
+            else{
+                callback(null, res)
+            }
+        })
+    }
+
+    else{
+        callback(null,[])
+    }
+    
+}
+
 function getRekapBkd(dataQuery, callback){
     
     if(dataQuery.tahun && dataQuery.user_id){
@@ -2495,4 +2520,5 @@ Pegawai.getDataByRFID = getDataByRFID
 Pegawai.insertKehadiran = insertKehadiran
 Pegawai.getRekapEwmp = getRekapEwmp
 Pegawai.listSimpegAnggotaProfesi = listSimpegAnggotaProfesi
+Pegawai.getBkdDosen = getBkdDosen
 module.exports= Pegawai;
