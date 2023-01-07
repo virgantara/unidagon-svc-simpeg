@@ -134,6 +134,8 @@ function getRekapEwmp(dataQuery, callback){
         txt += "  AND e.tahun_akademik like ? "
         params.push(dataQuery.tahun_skp+"%")
     }
+
+    txt += " ORDER BY e.tahun_akademik ASC"
     
     sql.query(txt,params,function(err, res){
         if(err){
