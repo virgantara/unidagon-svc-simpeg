@@ -117,8 +117,9 @@ function getRekapEwmp(dataQuery, callback){
     let txt = "SELECT e.* FROM ewmp e "
     txt += " JOIN user u ON u.NIY = e.NIY "
     txt += " JOIN jabatan j ON j.NIY = u.NIY "
+    txt += " JOIN m_jabatan mj ON mj.id = j.jabatan_id "
     txt += " JOIN unit_kerja uk  ON j.unker_id = uk.id "
-    txt += " WHERE 1 "
+    txt += " WHERE 1 AND mj.nama = 'Dosen' "
     
     if(dataQuery.NIY){
         txt += "  AND e.NIY = ? "
@@ -158,10 +159,10 @@ function getBkdDosenMenjabat(dataQuery, callback){
         let params = [dataQuery.tahun, dataQuery.dosen_id]
         let txt = "SELECT bd.* FROM bkd_dosen bd "
         txt += " JOIN komponen_kegiatan kk ON  bd.komponen_id = kk.id "
-        txt += " JOIN unsur_utama uu ON kk.unsur_id = uu.id "
+        // txt += " JOIN unsur_utama uu ON kk.unsur_id = uu.id "
         // txt += " JOIN skp_item si ON bd.skp_item_id = si.id "
         txt += " WHERE bd.status_bkd = '0' AND kk.nama LIKE 'J%' AND bd.tahun_id = ? AND bd.dosen_id = ? "    
-        txt += " GROUP BY bd.deskripsi"
+        
         sql.query(txt,params,function(err, res){
             if(err){
                 console.log(err)
