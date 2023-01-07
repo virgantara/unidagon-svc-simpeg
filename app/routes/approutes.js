@@ -4,8 +4,14 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
-  app.route('/simpeg/dosen/bkd')
-    .get(todoList.getBkdDosen);
+  app.route('/simpeg/dosen/bkd/jabatan')
+    .get(todoList.getBkdDosenMenjabat);
+
+  app.route('/simpeg/dosen/bkd/telitiabdimas')
+    .get(todoList.getBkdDosenRisetAbdimas);
+
+  app.route('/simpeg/dosen/bkd/ajar')
+    .get(todoList.getBkdDosenAjar);
 
   app.route('/simpeg/dosen/anggotaprofesi/list')
     .get(todoList.listSimpegAnggotaProfesi);

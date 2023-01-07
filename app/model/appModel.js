@@ -151,12 +151,93 @@ function getRekapEwmp(dataQuery, callback){
     
 }
 
-function getBkdDosen(dataQuery, callback){
+
+function getBkdDosenMenjabat(dataQuery, callback){
     
     if(dataQuery.tahun && dataQuery.dosen_id){
         let params = [dataQuery.tahun, dataQuery.dosen_id]
-        let txt = "SELECT * FROM bkd_dosen "
-        txt += " WHERE tahun_id = ? AND dosen_id = ? "    
+        let txt = "SELECT bd.* FROM bkd_dosen bd "
+        txt += " JOIN komponen_kegiatan kk ON  bd.komponen_id = kk.id "
+        txt += " JOIN unsur_utama uu ON kk.unsur_id = uu.id "
+        // txt += " JOIN skp_item si ON bd.skp_item_id = si.id "
+        txt += " WHERE bd.status_bkd = '0' AND kk.nama LIKE 'J%' AND bd.tahun_id = ? AND bd.dosen_id = ? "    
+        txt += " GROUP BY bd.deskripsi"
+        sql.query(txt,params,function(err, res){
+            if(err){
+                console.log(err)
+                callback(err,null)
+            }
+
+            else{
+                callback(null, res)
+            }
+        })
+    }
+
+    else{
+        callback(null,[])
+    }
+    
+}
+
+function getBkdDosenRisetAbdimas(dataQuery, callback){
+    
+    if(dataQuery.tahun && dataQuery.dosen_id){
+        let params = [dataQuery.tahun, dataQuery.dosen_id]
+        let txt = "SELECT bd.*,si.nama as skp_item_nama FROM bkd_dosen bd "
+        txt += " JOIN komponen_kegiatan kk ON  bd.komponen_id = kk.id "
+        txt += " JOIN unsur_utama uu ON kk.unsur_id = uu.id "
+        txt += " JOIN skp_item si ON bd.skp_item_id = si.id "
+        txt += " WHERE bd.status_bkd = '0' AND bd.tahun_id = ? AND bd.dosen_id = ? "    
+
+        if(dataQuery.kode){
+            txt += " AND uu.kode = ? "
+            params.push(dataQuery.kode)
+        }
+        // txt += " GROUP BY uu.kode "
+
+        sql.query(txt,params,function(err, res){
+            if(err){
+                console.log(err)
+                callback(err,null)
+            }
+
+            else{
+                callback(null, res)
+            }
+        })
+    }
+
+    else{
+        callback(null,[])
+    }
+    
+}
+
+
+function getBkdDosenAjar(dataQuery, callback){
+    
+    if(dataQuery.tahun && dataQuery.dosen_id){
+        let params = [dataQuery.tahun, dataQuery.dosen_id]
+        let txt = "SELECT bd.* FROM bkd_dosen bd "
+        txt += " JOIN komponen_kegiatan kk ON  bd.komponen_id = kk.id "
+        txt += " JOIN unsur_utama uu ON kk.unsur_id = uu.id "
+        // txt += " JOIN skp_item si ON bd.skp_item_id = si.id "
+        txt += " WHERE bd.status_bkd = '0' AND uu.kode = 'AJAR' AND kk.kode IN ('B1','B2') AND bd.tahun_id = ? AND bd.dosen_id = ? "    
+
+        if(dataQuery.ps_lain && dataQuery.prodi_ajar){
+            
+            if(dataQuery.ps_lain == 'sendiri'){
+                txt += ' AND kode_prodi_mengajar = ? '
+                params.push(dataQuery.prodi_ajar)
+            }
+
+            else{
+                txt += ' AND kode_prodi_mengajar <> ? '
+                params.push(dataQuery.prodi_ajar)    
+            }
+            
+        }
 
         sql.query(txt,params,function(err, res){
             if(err){
@@ -2520,5 +2601,7 @@ Pegawai.getDataByRFID = getDataByRFID
 Pegawai.insertKehadiran = insertKehadiran
 Pegawai.getRekapEwmp = getRekapEwmp
 Pegawai.listSimpegAnggotaProfesi = listSimpegAnggotaProfesi
-Pegawai.getBkdDosen = getBkdDosen
+Pegawai.getBkdDosenAjar = getBkdDosenAjar
+Pegawai.getBkdDosenRisetAbdimas = getBkdDosenRisetAbdimas
+Pegawai.getBkdDosenMenjabat = getBkdDosenMenjabat
 module.exports= Pegawai;

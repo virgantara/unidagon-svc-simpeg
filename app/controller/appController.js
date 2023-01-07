@@ -4,8 +4,30 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
-exports.getBkdDosen = function(req, res) {
-  Simpeg.getBkdDosen(
+exports.getBkdDosenMenjabat = function(req, res) {
+  Simpeg.getBkdDosenMenjabat(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getBkdDosenRisetAbdimas = function(req, res) {
+  Simpeg.getBkdDosenRisetAbdimas(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+exports.getBkdDosenAjar = function(req, res) {
+  Simpeg.getBkdDosenAjar(
     req.query,
     function(err, values) {    
     if (err)
