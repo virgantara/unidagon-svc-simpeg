@@ -1698,6 +1698,11 @@ function getProfilDosen(data,callback){
         params.push(data.kode_unik)
     }
 
+    if(data.uuid){
+        txt += " AND u.uuid = ? "
+        params.push(data.uuid)
+    }
+
     if(data.telegram_username){
         txt += " AND d.telegram_username = ? "
         params.push(data.telegram_username)
