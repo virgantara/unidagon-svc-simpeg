@@ -1075,6 +1075,16 @@ function getCountDataNIDN(dataQuery,callback){
     else if(dataQuery.status == '-1'){
         txt += " AND length(d.NIDN) <> 10 "
     }
+
+    if(dataQuery.wajib_tridharma){
+        txt += " AND d.wajib_tridharma = ? "
+        params.push(dataQuery.wajib_tridharma)
+    }
+
+    if(dataQuery.status_ihsan){
+        txt += " AND d.status_ihsan = ? "
+        params.push(dataQuery.status_ihsan)
+    }
     
     txt += " GROUP by p.id, p.nama"
 
