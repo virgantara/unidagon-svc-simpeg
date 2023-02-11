@@ -1013,6 +1013,16 @@ function getListDataNIDN(dataQuery,callback){
         txt += " AND length(d.NIDN) <> 10 "
     }
 
+    if(dataQuery.wajib_tridharma){
+        txt += " AND d.wajib_tridharma = ? "
+        params.push(dataQuery.wajib_tridharma)
+    }
+
+    if(dataQuery.status_ihsan){
+        txt += " AND d.status_ihsan = ? "
+        params.push(dataQuery.status_ihsan)
+    }
+
     txt += " ORDER BY d.nama ASC"
 
     sql.query(txt,params,function(err, res){
