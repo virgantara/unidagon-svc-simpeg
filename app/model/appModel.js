@@ -16,6 +16,76 @@ var Pegawai = function(task){
     
 };
 
+function listRumpunIlmuDosen(dataQuery, callback){
+    
+    let params = []
+    let txt = "SELECT d.nama, d.NIDN, d.gelar_depan, "
+    txt += " d.gelar_belakang FROM data_diri dd "
+    txt += " join bidang_ilmu bi ON bi.kode = dd.bidang_ilmu_id "
+    txt += " where bi.level = 3 "
+
+    if(dataQuery.kode){
+        txt += " AND bi.kode = ? "
+        params.push(dataQuery.kode)
+    }
+
+    sql.query(txt,params,function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        else{
+            callback(null,res)
+            
+        }
+    })
+}
+
+function rekapRumpunIlmuDosen(dataQuery, callback){
+    
+    let params = []
+    let txt = "SELECT count(*) as total, bi.kode, bi.nama from data_diri d "
+    txt += " join bidang_ilmu bi ON bi.kode = d.bidang_ilmu_id "
+    txt += " JOIN user u ON u.NIY = d.NIY "
+    txt += " JOIN prodi p ON p.ID = u.id_prod "
+    txt += " WHERE bi.level = 3 AND (u.status IN ('aktif','izinbelajar','tugasbelajar')) "
+
+    if(dataQuery.status_dosen){
+        txt += " AND d.status_dosen = ? "
+        params.push(dataQuery.status_dosen)
+    }
+
+    if(dataQuery.status == '1'){
+        txt += " AND length(d.NIDN) = 10 "
+    }
+
+    else if(dataQuery.status == '-1'){
+        txt += " AND length(d.NIDN) <> 10 "
+    }
+
+    if(dataQuery.wajib_tridharma){
+        txt += " AND d.wajib_tridharma = ? "
+        params.push(dataQuery.wajib_tridharma)
+    }
+
+    if(dataQuery.status_ihsan){
+        txt += " AND d.status_ihsan = ? "
+        params.push(dataQuery.status_ihsan)
+    }
+    
+    txt += " GROUP by bi.kode, bi.nama order by bi.nama; "
+
+    sql.query(txt,params,function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+        else
+            callback(null, res)
+    })
+}
+
 function local_listSimpegAnggotaProfesi(nidn, callback){
     
     let txt = "SELECT t.ID,t.organisasi, t.tanggal_mulai_keanggotaan, t.nama_kategori_kegiatan, "
@@ -969,6 +1039,11 @@ function getListDataNIDN(dataQuery,callback){
     if(dataQuery.status_dosen){
         txt += " AND d.status_dosen = ? "
         params.push(dataQuery.status_dosen)
+    }
+
+    if(dataQuery.bidang_ilmu_id){
+        txt += " AND d.bidang_ilmu_id = ? "
+        params.push(dataQuery.bidang_ilmu_id)
     }
 
     if(dataQuery.nidn){
@@ -2630,4 +2705,5 @@ Pegawai.listSimpegAnggotaProfesi = listSimpegAnggotaProfesi
 Pegawai.getBkdDosenAjar = getBkdDosenAjar
 Pegawai.getBkdDosenRisetAbdimas = getBkdDosenRisetAbdimas
 Pegawai.getBkdDosenMenjabat = getBkdDosenMenjabat
+Pegawai.rekapRumpunIlmuDosen = rekapRumpunIlmuDosen
 module.exports= Pegawai;
