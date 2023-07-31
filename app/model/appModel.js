@@ -1760,7 +1760,7 @@ function getProfilDosen(data,callback){
 
     var txt = "select d.NIY, d.NIDN, d.gelar_depan, d.gelar_belakang, d.nama, d.gender, u.email, d.tempat_lahir, "
     txt += " d.tanggal_lahir, p.nama as pangkat, p.golongan, j.nama as jabfung, j.kode as kode_jabfung, "
-    txt += " d.jenjang_kode, pr.nama as nama_prodi, u.status, bi.nama as bidang_ilmu, "
+    txt += " d.jenjang_kode, pr.nama as nama_prodi,pr.kode_prod as kode_prodi, u.status, bi.nama as bidang_ilmu, "
     txt += " bii.nama as bidang_ilmu_induk, bk.nama as kepakaran, bkp.nama as parent_kepakaran, "
     txt += " d.permalink, d.expertise, d.nik as ktp, u.sister_id, u.uuid, d.kode_feeder, d.id_reg_ptk, (SELECT GROUP_CONCAT(item_name) FROM auth_assignment WHERE u.id = user_id) as roles from data_diri d "
     txt += " JOIN m_pangkat p on p.id = d.pangkat"
