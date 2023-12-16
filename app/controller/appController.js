@@ -418,6 +418,7 @@ exports.getListAbdimas = function(req, res) {
 
 exports.getListUnitKerja = function(req, res) {
   Simpeg.getListUnitKerja(
+    req.query,
     function(err, values) {    
     if (err)
       res.send(err);

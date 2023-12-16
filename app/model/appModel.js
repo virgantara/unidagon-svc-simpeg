@@ -1553,9 +1553,17 @@ function getListAbdimas(dataQuery, callback){
     })
 }
 
-function getListUnitKerja(callback){
-    let txt = "SELECT * FROM unit_kerja"
-    sql.query(txt,[],function(err, res){
+function getListUnitKerja(dataQuery, callback){
+    let txt = "SELECT uk.*, TRIM(CONCAT(dd.gelar_depan,' ', dd.nama,' ', dd.gelar_belakang)) as nama_pejabat, dd.NIY as niy FROM unit_kerja uk "
+    txt += " JOIN user u ON u.ID = uk.pejabat_id "
+    txt += " JOIN data_diri dd ON dd.NIY = u.NIY "
+    let params = []
+    if(dataQuery.nama_unit){
+        txt += " WHERE uk.nama LIKE ? "
+        params.push('%'+dataQuery.nama_unit+'%')
+    }
+
+    sql.query(txt,params,function(err, res){
         if(err)
             callback(err,null)
         else
