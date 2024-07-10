@@ -1569,6 +1569,11 @@ function getListUnitKerja(dataQuery, callback){
         params.push(dataQuery.unit_id)
     }
 
+    if(dataQuery.jenis){
+        txt += " AND uk.jenis = ? "
+        params.push(dataQuery.jenis)
+    }
+
     sql.query(txt,params,function(err, res){
         if(err)
             callback(err,null)
