@@ -4,6 +4,17 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.listPublikasiDosen = function(req, res) {
+  Simpeg.listPublikasiDosen(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
 exports.rekapRumpunIlmuDosen = function(req, res) {
   Simpeg.rekapRumpunIlmuDosen(
     req.query,

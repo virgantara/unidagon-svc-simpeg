@@ -16,6 +16,69 @@ var Pegawai = function(task){
     
 };
 
+function listPublikasiDosen(dataQuery, callback){
+    
+    let params = []
+    let txt = "select t.id, t.judul_publikasi_paten, t.kategori_kegiatan_id, t.nama_jenis_publikasi, "
+    txt += " t.tanggal_terbit, (SELECT COUNT(*) FROM publikasi_author WHERE publikasi_author.pub_id = t.id) as jumlah_author, "
+    txt += " kom.angka_kredit_pak "
+    txt += " FROM publikasi t "
+    txt += " JOIN kategori_kegiatan kk ON t.kategori_kegiatan_id = kk.id "
+    txt += " JOIN komponen_kegiatan kom ON kom.kategori_kegiatan_id = kk.id "
+    txt += " JOIN publikasi_author pa ON pa.pub_id = t.id "
+    txt += " where 1 "
+
+    if(dataQuery.niy){
+        txt += " AND pa.NIY = ? "
+        params.push(dataQuery.niy)
+    }
+
+    if(dataQuery.corresponding_author){
+        txt += " AND pa.corresponding_author = ? "
+        params.push(dataQuery.corresponding_author)
+    }
+    
+
+    // if(dataQuery.corresponding_author == '0'){
+    //     txt += " AND pa.corresponding_author = 0 "
+    // }
+
+    if(dataQuery.tanggal_jafa){
+        txt += " AND t.tanggal_terbit >= ? "
+        params.push(dataQuery.tanggal_jafa)
+    }
+
+    if(dataQuery.kategori_kegiatan_id){
+        txt += " AND t.kategori_kegiatan_id = ? "
+        params.push(dataQuery.kategori_kegiatan_id)
+    }
+
+    if(dataQuery.status_anggota && dataQuery.status_anggota=='anggota'){
+
+        txt += " AND pa.urutan <> 1 "
+    }
+
+    if(dataQuery.status_anggota && dataQuery.status_anggota=='pertama'){
+
+        txt += " AND pa.urutan = 1 "
+    }
+
+    // txt += "GROUP BY t.id, t.judul_publikasi_paten, t.kategori_kegiatan_id, t.nama_jenis_publikasi, "
+    // txt += " t.tanggal_terbit, kom.angka_kredit_pak "
+
+    sql.query(txt,params,function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        else{
+            callback(null,res)
+            
+        }
+    })
+}
+
 function listRumpunIlmuDosen(dataQuery, callback){
     
     let params = []
@@ -2725,4 +2788,5 @@ Pegawai.getBkdDosenAjar = getBkdDosenAjar
 Pegawai.getBkdDosenRisetAbdimas = getBkdDosenRisetAbdimas
 Pegawai.getBkdDosenMenjabat = getBkdDosenMenjabat
 Pegawai.rekapRumpunIlmuDosen = rekapRumpunIlmuDosen
+Pegawai.listPublikasiDosen = listPublikasiDosen
 module.exports= Pegawai;
