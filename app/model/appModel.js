@@ -63,6 +63,11 @@ function listPublikasiDosen(dataQuery, callback){
         txt += " AND pa.urutan = 1 "
     }
 
+    if(dataQuery.ranking){
+        txt += " AND t.ranking = ? "
+        params.push(dataQuery.ranking)
+    }
+
     // txt += "GROUP BY t.id, t.judul_publikasi_paten, t.kategori_kegiatan_id, t.nama_jenis_publikasi, "
     // txt += " t.tanggal_terbit, kom.angka_kredit_pak "
 
