@@ -20,11 +20,9 @@ function listPublikasiDosen(dataQuery, callback){
     
     let params = []
     let txt = "select t.id, t.judul_publikasi_paten, t.kategori_kegiatan_id, t.nama_jenis_publikasi, "
-    txt += " t.tanggal_terbit, (SELECT COUNT(*) FROM publikasi_author WHERE publikasi_author.pub_id = t.id) as jumlah_author, "
-    txt += " kom.angka_kredit_pak "
+    txt += " t.tanggal_terbit, t.angka_kredit_pak, (SELECT COUNT(*) FROM publikasi_author WHERE publikasi_author.pub_id = t.id) as jumlah_author "
     txt += " FROM publikasi t "
     txt += " JOIN kategori_kegiatan kk ON t.kategori_kegiatan_id = kk.id "
-    txt += " JOIN komponen_kegiatan kom ON kom.kategori_kegiatan_id = kk.id "
     txt += " JOIN publikasi_author pa ON pa.pub_id = t.id "
     txt += " where 1 "
 
