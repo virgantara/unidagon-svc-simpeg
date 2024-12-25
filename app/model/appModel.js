@@ -1131,6 +1131,13 @@ function getListDataNIDN(dataQuery,callback){
         txt += " AND p.kode_prod = ? "
         params.push(dataQuery.kode_prodi)
     }
+
+    if(dataQuery.batas_usia){
+        if(dataQuery.batas_usia == '1')
+            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) > 65 "
+        else if(dataQuery.batas_usia == '2')
+            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) <= 65 "
+    }
     
     if(dataQuery.jabfung){
         txt += " AND ja.kode = ? "
@@ -1235,6 +1242,18 @@ function getCountDataNIDN(dataQuery,callback){
     if(dataQuery.status_ihsan){
         txt += " AND d.status_ihsan = ? "
         params.push(dataQuery.status_ihsan)
+    }
+
+    if(dataQuery.kode_prodi){
+        txt += " AND p.kode_prod = ? "
+        params.push(dataQuery.kode_prodi)
+    }
+
+    if(dataQuery.batas_usia){
+        if(dataQuery.batas_usia == '1')
+            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) > 65 "
+        else if(dataQuery.batas_usia == '2')
+            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) <= 65 "
     }
     
     txt += " GROUP by p.id, p.nama"
