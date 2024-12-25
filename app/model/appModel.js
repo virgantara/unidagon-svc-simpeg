@@ -16,6 +16,30 @@ var Pegawai = function(task){
     
 };
 
+function getJabatanFungsional(dataQuery, callback){
+    
+    let params = []
+    let txt = `SELECT * FROM m_jabatan_akademik `
+
+    if(dataQuery.kode){
+        txt += " AND kode = ? "
+        params.push(dataQuery.kode)
+    }
+
+    sql.query(txt,params,function(err, res){
+        if(err){
+            console.log(err)
+            callback(err,null)
+        }
+
+        else{
+            callback(null,res)
+            
+        }
+    })
+}
+
+
 function listPublikasiDosen(dataQuery, callback){
     
     let params = []
@@ -1132,11 +1156,20 @@ function getListDataNIDN(dataQuery,callback){
         params.push(dataQuery.kode_prodi)
     }
 
+    if(dataQuery.jabfung_id){
+        txt += " AND d.jabatan_fungsional = ? "
+        params.push(dataQuery.jabfung_id)
+    }
+
     if(dataQuery.batas_usia){
-        if(dataQuery.batas_usia == '1')
-            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) > 65 "
-        else if(dataQuery.batas_usia == '2')
-            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) <= 65 "
+        if(dataQuery.batas_usia == '1' && dataQuery.usia){
+            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) > ? "
+            params.push(dataQuery.usia)
+        }
+        else if(dataQuery.batas_usia == '2' && dataQuery.usia){
+            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) <= ? "
+            params.push(dataQuery.usia)
+        }
     }
     
     if(dataQuery.jabfung){
@@ -1216,7 +1249,7 @@ function getListDataNIDN(dataQuery,callback){
 
 function getCountDataNIDN(dataQuery,callback){
     let params = []
-    let txt = "select p.id, p.kode_prod, p.nama, count(*) as total from data_diri d "
+    let txt = "select p.id, p.kode_prod, p.nama,  count(*) as total from data_diri d "
     txt += " JOIN user u ON u.NIY = d.NIY "
     txt += " JOIN prodi p ON p.ID = u.id_prod "
     txt += " WHERE (u.status IN ('aktif','izinbelajar','tugasbelajar')) "
@@ -1249,11 +1282,20 @@ function getCountDataNIDN(dataQuery,callback){
         params.push(dataQuery.kode_prodi)
     }
 
+    if(dataQuery.jabfung_id){
+        txt += " AND d.jabatan_fungsional = ? "
+        params.push(dataQuery.jabfung_id)
+    }
+
     if(dataQuery.batas_usia){
-        if(dataQuery.batas_usia == '1')
-            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) > 65 "
-        else if(dataQuery.batas_usia == '2')
-            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) <= 65 "
+        if(dataQuery.batas_usia == '1' && dataQuery.usia){
+            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) > ? "
+            params.push(dataQuery.usia)
+        }
+        else if(dataQuery.batas_usia == '2' && dataQuery.usia){
+            txt += " AND TIMESTAMPDIFF(YEAR, d.tanggal_lahir, CURDATE()) <= ? "
+            params.push(dataQuery.usia)
+        }
     }
     
     txt += " GROUP by p.id, p.nama"
@@ -2811,4 +2853,5 @@ Pegawai.getBkdDosenRisetAbdimas = getBkdDosenRisetAbdimas
 Pegawai.getBkdDosenMenjabat = getBkdDosenMenjabat
 Pegawai.rekapRumpunIlmuDosen = rekapRumpunIlmuDosen
 Pegawai.listPublikasiDosen = listPublikasiDosen
+Pegawai.getJabatanFungsional = getJabatanFungsional
 module.exports= Pegawai;
