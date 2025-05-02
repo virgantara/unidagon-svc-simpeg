@@ -1887,7 +1887,7 @@ function countDosen(dataQuery, callback){
 function getRiwayatPendidikan(data,callback){
     var params = [data.NIY]
     var txt = "select * FROM pendidikan"
-    txt += " WHERE NIY = ?; "
+    txt += " WHERE NIY = ? ORDER BY tahun_lulus ASC; "
 
     sql.query(txt,[params],function(err, res){
         if(err){
