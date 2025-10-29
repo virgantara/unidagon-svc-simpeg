@@ -380,10 +380,10 @@ function getBkdDosenRisetAbdimas(dataQuery, callback){
     
     if(dataQuery.tahun && dataQuery.dosen_id){
         let params = [dataQuery.tahun, dataQuery.dosen_id]
-        let txt = "SELECT bd.*,si.nama as skp_item_nama FROM bkd_dosen bd "
+        let txt = "SELECT bd.*,kk.nama as skp_item_nama FROM bkd_dosen bd "
         txt += " JOIN komponen_kegiatan kk ON  bd.komponen_id = kk.id "
         txt += " JOIN unsur_utama uu ON kk.unsur_id = uu.id "
-        txt += " JOIN skp_item si ON bd.skp_item_id = si.id "
+        // txt += " JOIN skp_item si ON bd.skp_item_id = si.id "
         txt += " WHERE bd.status_bkd = '0' AND bd.tahun_id = ? AND bd.dosen_id = ? "    
 
         if(dataQuery.kode){
