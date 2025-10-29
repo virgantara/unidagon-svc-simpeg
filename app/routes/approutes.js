@@ -4,6 +4,9 @@
 module.exports = function(app) {
   var todoList = require('../controller/appController');
 
+  app.route('/simpeg/pegawai/search')
+    .get(todoList.getPegawaiSearch);
+
   app.route('/simpeg/master/jabfung')
     .get(todoList.getJabatanFungsional);
 

@@ -16,6 +16,8 @@ var Pegawai = function(task){
     
 };
 
+
+
 function getJabatanFungsional(dataQuery, callback){
     
     let params = []
@@ -267,6 +269,39 @@ function listSimpegAnggotaProfesi(dataQuery, callback){
             console.log(err)
             callback(err, null)
         })
+    })
+}
+
+function getPegawaiSearch(dataQuery, callback){
+    // let params = [dataQuery.key]
+
+    let txt = `
+        SELECT 
+            t.ID as id,
+            t.NIY as nikh,
+            t.nama AS nama_pegawai,
+            t.uuid,
+            t.email,
+            t.gelar_depan,
+            t.gelar_belakang,
+            GROUP_CONCAT(DISTINCT mjab.nama SEPARATOR ', ') AS jabatan,
+            GROUP_CONCAT(DISTINCT uk.nama SEPARATOR ', ') AS unit_kerja,
+            GROUP_CONCAT(DISTINCT uk.id SEPARATOR ', ') AS unit_kerja_id,
+            GROUP_CONCAT(DISTINCT mjab.nama SEPARATOR ', ') AS peran
+        FROM user t
+        JOIN jabatan j ON j.NIY = t.NIY
+        JOIN m_jabatan mjab ON mjab.id = j.jabatan_id
+        JOIN unit_kerja uk ON j.unker_id = uk.id
+        WHERE t.nama LIKE '%`+dataQuery.key+`%'
+        GROUP BY t.ID, t.nama, t.gelar_depan, t.gelar_belakang;
+    `
+    
+    sql.query(txt, [], (err, res)=>{
+        if (err){
+            return callback(err, null)
+        }
+
+        callback(null, res)
     })
 }
 
@@ -2780,7 +2815,7 @@ function getListTendik(data,callback){
   
 }
 
-
+Pegawai.getPegawaiSearch = getPegawaiSearch
 Pegawai.getListDosen = getListDosen;
 Pegawai.getListTendik = getListTendik
 Pegawai.countJurnal = countJurnal

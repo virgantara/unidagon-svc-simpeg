@@ -4,6 +4,18 @@ var Simpeg = require('../model/appModel.js');
 
 var response = require('../../res.js');
 
+exports.getPegawaiSearch = function(req, res) {
+  Simpeg.getPegawaiSearch(
+    req.query,
+    function(err, values) {    
+    if (err)
+      res.send(err);
+    else
+      response.ok(values, res);
+  });
+};
+
+
 exports.getJabatanFungsional = function(req, res) {
   Simpeg.getJabatanFungsional(
     req.query,
