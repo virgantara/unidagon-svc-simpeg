@@ -316,6 +316,11 @@ function getPegawaiSearch(dataQuery, callback) {
         params.push(dataQuery.tipe_sdi);
     }
 
+    if (dataQuery.uuid && dataQuery.uuid.trim() !== '') {
+        whereClauses.push(`t.uuid = ?`);
+        params.push(dataQuery.uuid);
+    }
+
     // Append conditions
     if (whereClauses.length > 0) {
         txt += ' AND ' + whereClauses.join(' AND ');
