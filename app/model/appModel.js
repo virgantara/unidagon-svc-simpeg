@@ -301,7 +301,7 @@ function getPegawaiSearch(dataQuery, callback) {
         JOIN m_jabatan mjab ON mjab.id = j.jabatan_id
         JOIN unit_kerja uk ON j.unker_id = uk.id
         JOIN pilihan p ON t.kategori_pegawai_id = p.id
-        WHERE 1=1
+        WHERE t.status IN ('aktif','cuti','tugasbelajar','izinbelajar')
     `;
 
     // Safe parameter binding for name filter
