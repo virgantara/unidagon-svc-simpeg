@@ -271,25 +271,27 @@ function listSimpegAnggotaProfesi(dataQuery, callback){
         })
     })
 }
-
-function getPegawaiSearch(dataQuery, callback){
-    // let params = [dataQuery.key]
-
+function getPegawaiSearch(dataQuery, callback) {
+    let params = [];
+    let whereClauses = [];
+    
+    // Base SQL
     let txt = `
         SELECT 
-            t.ID as id,
-            t.NIY as nikh,
+            t.ID AS id,
+            t.NIY AS nikh,
             t.nama AS nama_pegawai,
             t.uuid,
             t.email,
             t.gelar_depan,
             t.gelar_belakang,
+            p.label as tipe_sdi,
+            p.value as kode_tipe_sdi,
             GROUP_CONCAT(
                 CONCAT(mjab.nama, ' (', uk.nama, ')')
                 ORDER BY j.id ASC
                 SEPARATOR ', '
             ) AS jabatan_unit,
-
             GROUP_CONCAT(mjab.nama ORDER BY j.id ASC SEPARATOR ', ') AS jabatan,
             GROUP_CONCAT(uk.nama ORDER BY j.id ASC SEPARATOR ', ') AS unit_kerja,
             GROUP_CONCAT(uk.id ORDER BY j.id ASC SEPARATOR ', ') AS unit_kerja_id,
@@ -298,19 +300,42 @@ function getPegawaiSearch(dataQuery, callback){
         JOIN jabatan j ON j.NIY = t.NIY
         JOIN m_jabatan mjab ON mjab.id = j.jabatan_id
         JOIN unit_kerja uk ON j.unker_id = uk.id
-        WHERE t.nama LIKE '%`+dataQuery.key+`%'
+        JOIN pilihan p ON t.kategori_pegawai_id = p.id
+        WHERE 1=1
+    `;
+
+    // Safe parameter binding for name filter
+    if (dataQuery.key && dataQuery.key.trim() !== '') {
+        whereClauses.push(`t.nama LIKE ?`);
+        params.push(`%${dataQuery.key}%`);
+    }
+
+    // Optional filter by tipe_sdi
+    if (dataQuery.tipe_sdi && dataQuery.tipe_sdi.trim() !== '') {
+        whereClauses.push(`p.value = ?`);
+        params.push(dataQuery.tipe_sdi);
+    }
+
+    // Append conditions
+    if (whereClauses.length > 0) {
+        txt += ' AND ' + whereClauses.join(' AND ');
+    }
+
+    // Grouping and ordering
+    txt += `
         GROUP BY t.ID, t.NIY, t.nama, t.uuid, t.email, t.gelar_depan, t.gelar_belakang
         ORDER BY t.nama ASC;
-    `
-    
-    sql.query(txt, [], (err, res)=>{
-        if (err){
-            return callback(err, null)
-        }
+    `;
 
-        callback(null, res)
-    })
+    // Execute query safely
+    sql.query(txt, params, (err, res) => {
+        if (err) {
+            return callback(err, null);
+        }
+        callback(null, res);
+    });
 }
+
 
 function getRekapEwmp(dataQuery, callback){
     
