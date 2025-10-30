@@ -284,16 +284,23 @@ function getPegawaiSearch(dataQuery, callback){
             t.email,
             t.gelar_depan,
             t.gelar_belakang,
-            GROUP_CONCAT(DISTINCT mjab.nama SEPARATOR ', ') AS jabatan,
-            GROUP_CONCAT(DISTINCT uk.nama SEPARATOR ', ') AS unit_kerja,
-            GROUP_CONCAT(DISTINCT uk.id SEPARATOR ', ') AS unit_kerja_id,
-            GROUP_CONCAT(DISTINCT mjab.nama SEPARATOR ', ') AS peran
+            GROUP_CONCAT(
+                CONCAT(mjab.nama, ' (', uk.nama, ')')
+                ORDER BY j.id ASC
+                SEPARATOR ', '
+            ) AS jabatan_unit,
+
+            GROUP_CONCAT(mjab.nama ORDER BY j.id ASC SEPARATOR ', ') AS jabatan,
+            GROUP_CONCAT(uk.nama ORDER BY j.id ASC SEPARATOR ', ') AS unit_kerja,
+            GROUP_CONCAT(uk.id ORDER BY j.id ASC SEPARATOR ', ') AS unit_kerja_id,
+            GROUP_CONCAT(mjab.nama ORDER BY j.id ASC SEPARATOR ', ') AS peran
         FROM user t
         JOIN jabatan j ON j.NIY = t.NIY
         JOIN m_jabatan mjab ON mjab.id = j.jabatan_id
         JOIN unit_kerja uk ON j.unker_id = uk.id
         WHERE t.nama LIKE '%`+dataQuery.key+`%'
-        GROUP BY t.ID, t.nama, t.gelar_depan, t.gelar_belakang;
+        GROUP BY t.ID, t.NIY, t.nama, t.uuid, t.email, t.gelar_depan, t.gelar_belakang
+        ORDER BY t.nama ASC;
     `
     
     sql.query(txt, [], (err, res)=>{
