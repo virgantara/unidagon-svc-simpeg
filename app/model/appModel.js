@@ -17,6 +17,82 @@ var Pegawai = function(task){
 };
 
 
+function getPegawaiSearch(dataQuery, callback) {
+    let params = [];
+    let whereClauses = [];
+    
+    // Base SQL
+    let txt = `
+        SELECT 
+            t.ID AS id,
+            t.NIY AS nikh,
+            t.nama AS nama_pegawai,
+            t.uuid,
+            t.email,
+            t.gelar_depan,
+            t.gelar_belakang,
+            p.label as tipe_sdi,
+            p.value as kode_tipe_sdi,
+            p_sdi.value as kategori_sdi,
+            GROUP_CONCAT(
+                CONCAT(mjab.nama, ' (', uk.nama, ')')
+                ORDER BY j.id ASC
+                SEPARATOR ', '
+            ) AS jabatan_unit,
+            GROUP_CONCAT(mjab.nama ORDER BY j.id ASC SEPARATOR ', ') AS jabatan,
+            GROUP_CONCAT(uk.nama ORDER BY j.id ASC SEPARATOR ', ') AS unit_kerja,
+            GROUP_CONCAT(uk.id ORDER BY j.id ASC SEPARATOR ', ') AS unit_kerja_id,
+            GROUP_CONCAT(mjab.nama ORDER BY j.id ASC SEPARATOR ', ') AS peran
+        FROM user t
+        JOIN jabatan j ON j.NIY = t.NIY
+        JOIN m_jabatan mjab ON mjab.id = j.jabatan_id
+        JOIN unit_kerja uk ON j.unker_id = uk.id
+        JOIN pilihan p ON t.kategori_pegawai_id = p.id
+        JOIN pilihan p_sdi ON t.kategori_sdi_id = p_sdi.id
+        WHERE t.status IN ('aktif','cuti','tugasbelajar','izinbelajar')
+    `;
+
+    // Safe parameter binding for name filter
+    if (dataQuery.key && dataQuery.key.trim() !== '') {
+        whereClauses.push(`t.nama LIKE ?`);
+        params.push(`%${dataQuery.key}%`);
+    }
+
+    // Optional filter by tipe_sdi
+    if (dataQuery.tipe_sdi && dataQuery.tipe_sdi.trim() !== '') {
+        whereClauses.push(`p.value = ?`);
+        params.push(dataQuery.tipe_sdi);
+    }
+
+    if (dataQuery.kategori_sdi) {
+        whereClauses.push(`p_sdi.value = ?`);
+        params.push(dataQuery.kategori_sdi);
+    }
+
+    if (dataQuery.uuid && dataQuery.uuid.trim() !== '') {
+        whereClauses.push(`t.uuid = ?`);
+        params.push(dataQuery.uuid);
+    }
+
+    // Append conditions
+    if (whereClauses.length > 0) {
+        txt += ' AND ' + whereClauses.join(' AND ');
+    }
+
+    // Grouping and ordering
+    txt += `
+        GROUP BY t.ID, t.NIY, t.nama, t.uuid, t.email, t.gelar_depan, t.gelar_belakang
+        ORDER BY t.nama ASC;
+    `;
+
+    // Execute query safely
+    sql.query(txt, params, (err, res) => {
+        if (err) {
+            return callback(err, null);
+        }
+        callback(null, res);
+    });
+}
 
 function getJabatanFungsional(dataQuery, callback){
     
@@ -270,75 +346,6 @@ function listSimpegAnggotaProfesi(dataQuery, callback){
             callback(err, null)
         })
     })
-}
-function getPegawaiSearch(dataQuery, callback) {
-    let params = [];
-    let whereClauses = [];
-    
-    // Base SQL
-    let txt = `
-        SELECT 
-            t.ID AS id,
-            t.NIY AS nikh,
-            t.nama AS nama_pegawai,
-            t.uuid,
-            t.email,
-            t.gelar_depan,
-            t.gelar_belakang,
-            p.label as tipe_sdi,
-            p.value as kode_tipe_sdi,
-            GROUP_CONCAT(
-                CONCAT(mjab.nama, ' (', uk.nama, ')')
-                ORDER BY j.id ASC
-                SEPARATOR ', '
-            ) AS jabatan_unit,
-            GROUP_CONCAT(mjab.nama ORDER BY j.id ASC SEPARATOR ', ') AS jabatan,
-            GROUP_CONCAT(uk.nama ORDER BY j.id ASC SEPARATOR ', ') AS unit_kerja,
-            GROUP_CONCAT(uk.id ORDER BY j.id ASC SEPARATOR ', ') AS unit_kerja_id,
-            GROUP_CONCAT(mjab.nama ORDER BY j.id ASC SEPARATOR ', ') AS peran
-        FROM user t
-        JOIN jabatan j ON j.NIY = t.NIY
-        JOIN m_jabatan mjab ON mjab.id = j.jabatan_id
-        JOIN unit_kerja uk ON j.unker_id = uk.id
-        JOIN pilihan p ON t.kategori_pegawai_id = p.id
-        WHERE t.status IN ('aktif','cuti','tugasbelajar','izinbelajar')
-    `;
-
-    // Safe parameter binding for name filter
-    if (dataQuery.key && dataQuery.key.trim() !== '') {
-        whereClauses.push(`t.nama LIKE ?`);
-        params.push(`%${dataQuery.key}%`);
-    }
-
-    // Optional filter by tipe_sdi
-    if (dataQuery.tipe_sdi && dataQuery.tipe_sdi.trim() !== '') {
-        whereClauses.push(`p.value = ?`);
-        params.push(dataQuery.tipe_sdi);
-    }
-
-    if (dataQuery.uuid && dataQuery.uuid.trim() !== '') {
-        whereClauses.push(`t.uuid = ?`);
-        params.push(dataQuery.uuid);
-    }
-
-    // Append conditions
-    if (whereClauses.length > 0) {
-        txt += ' AND ' + whereClauses.join(' AND ');
-    }
-
-    // Grouping and ordering
-    txt += `
-        GROUP BY t.ID, t.NIY, t.nama, t.uuid, t.email, t.gelar_depan, t.gelar_belakang
-        ORDER BY t.nama ASC;
-    `;
-
-    // Execute query safely
-    sql.query(txt, params, (err, res) => {
-        if (err) {
-            return callback(err, null);
-        }
-        callback(null, res);
-    });
 }
 
 
