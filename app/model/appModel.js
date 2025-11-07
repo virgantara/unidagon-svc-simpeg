@@ -26,6 +26,7 @@ function getPegawaiSearch(dataQuery, callback) {
         SELECT 
             t.ID AS id,
             t.NIY AS nikh,
+            t.kode_unik,
             t.nama AS nama_pegawai,
             t.uuid,
             t.email,
